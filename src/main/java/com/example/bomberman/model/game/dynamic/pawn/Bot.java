@@ -1,6 +1,7 @@
 package com.example.bomberman.model.game.dynamic.pawn;
 
 import com.example.bomberman.model.Move;
+import com.example.bomberman.model.game.Rect;
 import com.example.bomberman.model.game.Vector2;
 import com.example.bomberman.model.game.dynamic.Bomb;
 import com.example.bomberman.model.game.dynamic.Fire;
@@ -17,11 +18,7 @@ import java.util.List;
 
 public class Bot extends Pawn {
 
-    @JsonIgnore
-    private Logger log = LoggerFactory.getLogger(Bot.class);
-    /** Current direction */
-    /*@JsonIgnore
-    Move direction = Move.UP;*/
+
     @JsonIgnore
     Move lastDirection = null;
 
@@ -29,14 +26,7 @@ public class Bot extends Pawn {
     @JsonIgnore
     List<Move> excludeDirections;
 
-    /** Current X axis direction */
-    /*@JsonIgnore
-    int dirX = 0;*/
-
-    /** Current Y axis direction */
-    /*@JsonIgnore
-    int dirY = -1;*/
-
+    @JsonIgnore
     Vector2 dir = new Vector2(0, -1);
 
     /** Target position on map we are heading to */
@@ -57,6 +47,9 @@ public class Bot extends Pawn {
     int startTimer = 0;
     @JsonIgnore
     boolean started = false;
+
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(Bot.class);
 
     public Bot(GameEntityRepository gameEntityRepository, Vector2 entityPosition) {
         super(null, gameEntityRepository);
@@ -158,9 +151,11 @@ public class Bot extends Pawn {
             velocity = distanceY;
         }
 
-        Vector2 targetPosition = new Vector2(getBitmapPosition().getX() + this.dir.getX() * velocity, getBitmapPosition().getY() + this.dir.getY() * velocity);
-        if (!this.detectWallCollision(targetPosition)) {
-            setBitmapPosition(targetPosition);
+        //Vector2 targetPosition = new Vector2(getBitmapPosition().getX() + this.dir.getX() * velocity, getBitmapPosition().getY() + this.dir.getY() * velocity);
+        Rect rect = new Rect(collision);
+        rect.setBitmapPosition(getBitmapPosition().add(dir.mul(velocity)));
+        if (!this.detectWallCollision(rect)) {
+            setBitmapPosition(rect.getBitmapPosition());
             /*position.setX(targetPosition.getX());
             position.setY(targetPosition.getY());
             setBitmapPosition(position);*/
@@ -231,7 +226,6 @@ public class Bot extends Pawn {
     }
     @Override
     public void applyBonus(Bonus bonus) {
-        //this._super(bonus);
         super.applyBonus(bonus);
 
         // It is too dangerous to have more bombs available
@@ -247,7 +241,9 @@ public class Bot extends Pawn {
         super.die();
         boolean botsAlive = false;
 
-        gameEntityRepository.removeBot(this);
+        if (gameEntityRepository.removeBot(this)) {
+            log.debug("Remove Bot");
+        }
 
         // Cache bots
         /*List<Bot> bots = new ArrayList<>(gameObjectRepository.getBots());

@@ -9,8 +9,7 @@ import java.util.Objects;
 
 public class Rect implements Collider {
 
-    @JsonIgnore
-    private Logger log = LoggerFactory.getLogger(Rect.class);
+
     /**
      * Entity position on map grid pixels
      */
@@ -26,11 +25,10 @@ public class Rect implements Collider {
     /**
      * Bitmap dimensions
      */
-
     protected Size size;
 
-    /*@JsonIgnore
-    protected final int border = 5;*/
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(Rect.class);
 
     public Rect(Size size) {
         this.size = size;
@@ -46,6 +44,9 @@ public class Rect implements Collider {
         return bitmapPosition;
     }
 
+    /**
+     * Calculates and updates entity position according to its actual bitmap position
+     */
     public void setBitmapPosition(Vector2 bitmapPosition) {
         this.entityPosition = convertToEntityPosition(bitmapPosition);
         this.bitmapPosition = bitmapPosition;
@@ -55,13 +56,16 @@ public class Rect implements Collider {
         return entityPosition;
     }
 
+    /**
+     * Calculates and updates bitmap position according to its actual entity position
+     */
     public void setEntityPosition(Vector2 entityPosition) {
         this.bitmapPosition = convertToBitmapPosition(entityPosition);
         this.entityPosition = entityPosition;
     }
 
     public Vector2 getCentralBitmapPosition() {
-        return new Vector2((bitmapPosition.getX() + size.getWight() / 2), (bitmapPosition.getY() + size.getHeight() / 2));
+        return new Vector2((bitmapPosition.getX() + size.getWeight() / 2), (bitmapPosition.getY() + size.getHeight() / 2));
     }
 
     public Size getSize() {
@@ -92,18 +96,16 @@ public class Rect implements Collider {
      * Convert bitmap pixels position to entity on grid position.
      */
     private Vector2 convertToEntityPosition(Vector2 pixels) {
-        Vector2 position = new Vector2(Math.round((pixels.getX() + size.getWight() / 2) / GameEngine.tileSize),
-                Math.round((pixels.getY() + size.getHeight() / 2) / GameEngine.tileSize));
-        return position;
+        return new Vector2((pixels.getX() + size.getWeight() / 2) / GameEngine.TILE_SIZE,
+                (pixels.getY() + size.getHeight() / 2) / GameEngine.TILE_SIZE);
     }
 
     /**
      * Convert entity on grid position to bitmap pixels position.
      */
     public static Vector2 convertToBitmapPosition(Vector2 entity) {
-        Vector2 position = new Vector2(Math.round(entity.getX() * GameEngine.tileSize),
-                Math.round(entity.getY() * GameEngine.tileSize));
-        return position;
+        return new Vector2(entity.getX() * GameEngine.TILE_SIZE,
+                entity.getY() * GameEngine.TILE_SIZE);
     }
 
     @Override
@@ -112,10 +114,10 @@ public class Rect implements Collider {
             return false;
         }
 
-        log.debug("{" + this + "\n" + other + "}");
+        //log.debug("{" + this + "\n" + other + "}");
 
         if (getClass() == other.getClass()) {
-            return isCollidingGameEntity((Rect) other);
+            return isCollidingRect((Rect) other);
         }
 
         if (other.getClass() == Vector2.class) {
@@ -123,40 +125,17 @@ public class Rect implements Collider {
         }
 
         return other.isColliding(this);
-
-        /*if (equals(other)) {
-            return true;
-        }
-
-        if (other instanceof Rect) {
-            Rect gameEntity = (Rect) other;
-            return isCollidingGameEntity(gameEntity);
-        }
-
-        if (other instanceof Point) {
-            Point point = (Point) other;
-            return isCollidingPoint(point);
-        }
-
-        return false;*/
     }
 
-    protected boolean isCollidingGameEntity(Rect gameEntity) {
-        /*if (this.position..getLeft() > b.getRight() ||
-                a.getRight() < b.getLeft()) {
-            return false;
-        }
-
-        return a.getBottom() <= b.getTop() &&
-                a.getTop() >= b.getBottom();*/
+    protected boolean isCollidingRect(Rect gameEntity) {
 
         if (this.bitmapPosition.getX() >= (gameEntity.bitmapPosition.getX() + gameEntity.size.getHeight()) ||
                 (this.bitmapPosition.getX() + this.size.getHeight()) <= gameEntity.bitmapPosition.getX()) {
             return false;
         }
 
-        return this.bitmapPosition.getY() < (gameEntity.bitmapPosition.getY() + gameEntity.size.getWight()) &&
-                (this.bitmapPosition.getY() + this.size.getWight()) > gameEntity.bitmapPosition.getY();
+        return this.bitmapPosition.getY() < (gameEntity.bitmapPosition.getY() + gameEntity.size.getWeight()) &&
+                (this.bitmapPosition.getY() + this.size.getWeight()) > gameEntity.bitmapPosition.getY();
     }
 
     protected boolean isCollidingPoint(Vector2 vector2) {
@@ -167,7 +146,7 @@ public class Rect implements Collider {
         }
 
         return this.bitmapPosition.getY() < vector2.getY() &&
-                (this.bitmapPosition.getY() + this.size.getWight()) > vector2.getY();
+                (this.bitmapPosition.getY() + this.size.getWeight()) > vector2.getY();
     }
 
     @Override

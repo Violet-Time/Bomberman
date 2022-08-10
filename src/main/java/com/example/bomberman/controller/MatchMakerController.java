@@ -1,5 +1,6 @@
 package com.example.bomberman.controller;
 
+import com.example.bomberman.service.ConnectionProducer;
 import com.example.bomberman.service.MatchMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,10 @@ public class MatchMakerController {
 
     private static final Logger log = LoggerFactory.getLogger(MatchMakerController.class);
 
-    private MatchMaker matchMaker;
+    private ConnectionProducer connectionProducer;
 
-    public MatchMakerController(MatchMaker matchMaker) {
-        this.matchMaker = matchMaker;
+    public MatchMakerController(ConnectionProducer connectionProducer) {
+        this.connectionProducer = connectionProducer;
     }
 
     @PostMapping(path = "/join"/*,
@@ -25,6 +26,6 @@ public class MatchMakerController {
 
         log.info("{} join", name);
         //gameService.
-        return "" + matchMaker.join(name);
+        return "" + connectionProducer.produce(name);
     }
 }

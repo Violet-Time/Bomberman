@@ -54,6 +54,7 @@ public interface GameEntityRepository {
      */
     Material getTileMaterial(Vector2 position);
 
+    boolean removePlayer(Player player);
     boolean removeBot(Bot bot);
     boolean removeTile(Tile tile);
     boolean removeBomb(Bomb bomb);
@@ -61,4 +62,6 @@ public interface GameEntityRepository {
     boolean removeFire(Fire fire);
 
     int playersCount();
+
+    long generateId();
 }

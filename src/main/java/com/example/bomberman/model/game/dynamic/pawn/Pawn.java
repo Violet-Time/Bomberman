@@ -22,17 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@JsonIgnoreProperties(value = {"log", "TYPE", "size", "velocity", "bombsMax", "bombStrength", "bombs",
-                                "escapeBomb", "deadTimer", "action"})
 public class Pawn extends DynamicGameObject {
 
-    @JsonIgnore
-    private Logger log = LoggerFactory.getLogger(Pawn.class);
-    @JsonIgnore
-    public final static String TYPE = "Pawn";
 
-    @JsonIgnore
-    protected static final Size size = new Size(48, 48);
+    protected boolean alive;
+
+    /** Current direction */
+    protected Move direction;
 
     /**
      * Moving speed
@@ -51,9 +47,7 @@ public class Pawn extends DynamicGameObject {
      */
     @JsonIgnore
     protected int bombStrength = 1;
-    protected boolean alive;
 
-    protected Move direction;
     @JsonIgnore
     protected List<Bomb> bombs = new ArrayList<>();
 
@@ -69,9 +63,15 @@ public class Pawn extends DynamicGameObject {
     @JsonIgnore
     Action action;
 
-    //private Point pixels;
+    @JsonIgnore
+    public final static String TYPE = "Pawn";
 
-    //GameEngine gameEngine;
+    @JsonIgnore
+    protected static final Size size = new Size(48, 48);
+
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(Pawn.class);
+
 
     public Pawn(Action action, GameEntityRepository gameEntityRepository) {
         super(gameEntityRepository, size, TYPE);
@@ -79,7 +79,6 @@ public class Pawn extends DynamicGameObject {
         this.action = action;
 
         getCollision().setSize(new Size(20, 20));
-        //this.pixels = Utils.convertToBitmapPosition(position);
     }
 
     @Override
@@ -92,19 +91,12 @@ public class Pawn extends DynamicGameObject {
     }
 
     public void plantBomb() {
-        int unexplodedBombs = 0;
 
         if (!gameEntityRepository.getBombs(getEntityPosition()).isEmpty()) {
             return;
         }
 
-        for (Bomb bomb : this.bombs) {
-            if (!bomb.isExploded()) {
-                unexplodedBombs++;
-            }
-        }
-
-        if (unexplodedBombs < bombsMax) {
+        if (this.bombs.size() < bombsMax) {
             Bomb bomb = new Bomb(gameEntityRepository, bombStrength);
             bomb.setEntityPosition(getEntityPosition());
 
@@ -117,6 +109,8 @@ public class Pawn extends DynamicGameObject {
                 this.bombs.remove(bomb);
                 return e;
             });
+
+            log.debug("Plant bomb \n" + bomb);
         }
     }
 
@@ -135,11 +129,10 @@ public class Pawn extends DynamicGameObject {
      * Returns position where we should move before we can go to target.
      */
     public Vector2 getCornerFix(Vector2 dir) {
-        int edgeSize = 30;
 
-        // fix position to where we should go first
-        Vector2 entityPosition = null;
-        Vector2 bitmapPosition = getBitmapPosition();
+        int edgeSize = 26;
+
+        Vector2 bitmapPosition = collision.getBitmapPosition().sub(6,6);
 
         // possible fix position we are going to choose from
         Vector2 pos1 = getEntityPosition().add(dir.getY(), dir.getX());
@@ -152,132 +145,71 @@ public class Pawn extends DynamicGameObject {
 
         // in front of current position
         if (gameEntityRepository.getTileMaterial(getEntityPosition().add(dir)) == Material.GRASS) {
-            return dir;
-            //entityPosition = getEntityPosition();
+
+            Vector2 vector2 = convertToBitmapPosition(collision.getEntityPosition());
+
+            if (vector2.sub(bitmapPosition.add(dir.getY(), dir.getX())).magnitude() >
+                    vector2.sub(bitmapPosition.sub(dir.getY(), dir.getX())).magnitude()) {
+                return new Vector2(-dir.getY(), -dir.getX());
+            } else {
+                return new Vector2(dir.getY(), dir.getX());
+            }
         }
+
         // right bottom
         // left top
-        if (Math.sqrt(Math.pow(bitmapPosition.getX() - bmp1.getX(), 2) + Math.pow(bitmapPosition.getY() - bmp1.getY(), 2)) <=
-                Math.sqrt(Math.pow(bitmapPosition.getX() - bmp2.getX(), 2) + Math.pow(bitmapPosition.getY() - bmp2.getY(), 2))
-        ) {
-            if (gameEntityRepository.getTileMaterial(pos1) == Material.GRASS &&
-                    gameEntityRepository.getTileMaterial(pos1.add(dir)) == Material.GRASS) {
-                return new Vector2(dir.getY(), dir.getX());
-            } else if (gameEntityRepository.getTileMaterial(pos2) == Material.GRASS
-                    && gameEntityRepository.getTileMaterial(pos2.add(dir)) == Material.GRASS) {
-                return new Vector2(-dir.getY(), -dir.getX());
-            }
-            //entityPosition = pos1;
-        } else {
-            if (gameEntityRepository.getTileMaterial(pos2) == Material.GRASS
-                    && gameEntityRepository.getTileMaterial(pos2.add(dir)) == Material.GRASS) {
-                return new Vector2(-dir.getY(), -dir.getX());
-            } else if (gameEntityRepository.getTileMaterial(pos1) == Material.GRASS &&
-                    gameEntityRepository.getTileMaterial(pos1.add(dir)) == Material.GRASS) {
-                return new Vector2(dir.getY(), dir.getX());
-            }
+        if (gameEntityRepository.getTileMaterial(pos1) == Material.GRASS &&
+                gameEntityRepository.getTileMaterial(pos1.add(dir)) == Material.GRASS &&
+                    bitmapPosition.sub(bmp1).magnitude() <= edgeSize) {
+            return new Vector2(dir.getY(), dir.getX());
         }
 
         // right top
         // left bottom
-        /*else if (gameEntityRepository.getTileMaterial(pos2) == Material.GRASS
-                && gameEntityRepository.getTileMaterial(pos2.add(dir)) == Material.GRASS) {
+        if (gameEntityRepository.getTileMaterial(pos2) == Material.GRASS &&
+                gameEntityRepository.getTileMaterial(pos2.add(dir)) == Material.GRASS &&
+                    bitmapPosition.sub(bmp2).magnitude() <= edgeSize) {
             return new Vector2(-dir.getY(), -dir.getX());
-            //entityPosition = pos2;
-        }*/
-
-        /*if (gameEntityRepository.getTileMaterial(pos1) == Material.GRASS &&
-                gameEntityRepository.getTileMaterial(pos1.add(dir)) == Material.GRASS) {
-            return new Vector2(dir.getY(), dir.getX());
-        }*/
-
-        /*if (entityPosition != null && gameEntityRepository.getTileMaterial(entityPosition) == Material.GRASS) {
-            return convertToBitmapPosition(entityPosition);
-        }*/
+        }
 
         return null;
     }
 
     /**
-     * Calculates and updates entity position according to its actual bitmap position
-     */
-    /*public void updatePosition() {
-        this.position = Utils.convertToEntityPosition(this.pixels);
-    }*/
-
-    /**
      * Returns true when collision is detected and we should not move to target position.
      */
-    public boolean detectWallCollision(Vector2 vector) {
-        Rect rect = new Rect(this.collision);
-        rect.setBitmapPosition(rect.getBitmapPosition().add(vector));
+    public boolean detectWallCollision(Rect rect) {
 
         for (int i = 0; i < 8; i++) {
+
             Vector2 dir = rect.getEntityPosition().add(star(i));
             Tile tile = gameEntityRepository.getTile(dir);
-            //log.info(getBitmapPosition().toString());
-            //log.info(tile.getBitmapPosition().toString());
-            //log.info(dir.toString());
-            if (tile != null && !(tile instanceof Grass)) {
-                /*if (this instanceof Player) {
-                    log.info(rect.getBitmapPosition().toString());
-                    log.info(tile.getBitmapPosition().toString());
-                }*/
-                if (tile.isColliding(rect)) {
 
-                    //log.info(getBitmapPosition().toString());
-                    //log.info(tile.getBitmapPosition().toString());
+            if (tile != null && !(tile instanceof Grass)) {
+
+                if (tile.isColliding(rect)) {
+                    log.debug("Detect Wall \n" + tile + "\n" + this + "\n" + rect);
                     return true;
                 }
             }
         }
-        /*Rect player = new Rect();
-        player.setLeft(position.getX());
-        player.setBottom(position.getY());
-        player.setRight(player.getLeft() + this.size.getWight());
-        player.setTop(player.getBottom() + this.size.getHeight());
 
-        // Check possible collision with all wall and wood tiles
-        List<Tile> tiles = gameEntityRepository.getAllTitles();
-        for (Tile e : tiles) {
-            Point tilePosition = e.getBitmapPosition();
-
-            Rect tile = new Rect();
-            tile.setLeft(tilePosition.getX() * GameEngine.tileSize + 2);
-            tile.setBottom(tilePosition.getY() * GameEngine.tileSize + 2);
-            tile.setRight(tile.getLeft() + GameEngine.tileSize - 4);
-            tile.setTop(tile.getBottom() + GameEngine.tileSize - 4);
-
-            if (GameEngine.intersectRect(player, tile)) {
-                return true;
-            }
-        }*/
         return false;
     }
 
     /**
      * Returns true when the bomb collision is detected and we should not move to target position.
      */
-    public boolean detectBombCollision(Vector2 pixels) {
-        Vector2 position = Utils.convertToEntityPosition(pixels);
+    public boolean detectBombCollision(Rect rect) {
 
-        Optional<Bomb> bomb = gameEntityRepository.getBombs(position).stream().findFirst();
+        // Get a bomb in position
+        Optional<Bomb> bomb = gameEntityRepository.getBombs(rect.getEntityPosition()).stream().findFirst();
 
         if (bomb.isPresent()) {
+            log.debug("Detect bomb \n" + bomb.get() + "\n" + this);
+            // Allow to escape from bomb that appeared on my field
             return bomb.get() != this.escapeBomb;
         }
-
-        /*for (Bomb bomb : gameEntityRepository.getAllBombs()) {
-            // Compare bomb position
-            if (bomb.getRect().comparePositions(position)) {
-                // Allow to escape from bomb that appeared on my field
-                if (bomb == this.escapeBomb) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }*/
 
         // I have escaped already
         if (this.escapeBomb != null) {
@@ -290,20 +222,13 @@ public class Pawn extends DynamicGameObject {
     public boolean detectFireCollision() {
         for (int i = 0; i < 8; i++) {
             Vector2 dir = getEntityPosition().add(star(i));
-            Optional<Fire> fire = gameEntityRepository.getFires(dir).stream().findFirst();
+            Optional<Fire> fire = gameEntityRepository.getFires(dir).stream().filter(e -> e.getBomb().isExploded()).findFirst();
             if (fire.isPresent() &&
                 isColliding(fire.get())) {
+                log.debug("Detect fire \n" + fire + "\n" + this);
                 return true;
             }
         }
-        /*for (Bomb bomb : gameEntityRepository.getAllBombs()) {
-            for (Fire fire : bomb.getFires()) {
-                boolean collision = bomb.isExploded() && rect.comparePositions(fire.getRect());
-                if (collision) {
-                    return true;
-                }
-            }
-        }*/
         return false;
     }
 
@@ -317,6 +242,7 @@ public class Pawn extends DynamicGameObject {
             if (bonus.isPresent() &&
                     isColliding(bonus.get())) {
                 applyBonus(bonus.get());
+                log.debug("Apply bonus \n" + bonus + "\n" + this);
                 bonus.get().destroy();
             }
         }
@@ -337,6 +263,7 @@ public class Pawn extends DynamicGameObject {
 
     public void die() {
         this.alive = false;
+        log.debug("Die pawn" + this);
 
         /*if (gameObjectRepository.countPlayersAlive() == 1 && gameObjectRepository.playersCount() == 2) {
             gameEngine.gameOver('win');

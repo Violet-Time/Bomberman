@@ -15,9 +15,9 @@ import java.util.Map;
 
 @EqualsAndHashCode
 public class Replicator {
-    private static final Logger log = LoggerFactory.getLogger(Replicator.class);
     private ConnectionPool connectionPool;
 
+    private static final Logger log = LoggerFactory.getLogger(Replicator.class);
     public Replicator(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
@@ -35,7 +35,7 @@ public class Replicator {
     }
 
     public void receive(@NotNull WebSocketSession session, @NotNull String msg) {
-        log.info("RECEIVED: " + msg);
+        log.debug("RECEIVED: " + msg);
         Message message = JsonHelper.fromJson(msg, Message.class);
         //TODO TASK2 implement message processing
     }
@@ -46,13 +46,13 @@ public class Replicator {
     }
     public void send(@NotNull WebSocketSession session, @NotNull Topic topic, @NotNull Object object) {
         String message = JsonHelper.toJson(new Message(topic, JsonHelper.getJsonNode(object)));
-        log.info("SEND" + message);
+        log.debug("SEND" + message);
         connectionPool.send(session, message);
     }
 
     public void broadcast(@NotNull Topic topic, @NotNull Object object) {
         String message = JsonHelper.toJson(new Message(topic, JsonHelper.getJsonNode(object)));
-        log.info("SEND" + message);
+        log.debug("SEND" + message);
         connectionPool.broadcast(message);
     }
 

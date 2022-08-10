@@ -3,7 +3,6 @@ package com.example.bomberman.tick;
 import com.example.bomberman.message.Message;
 import com.example.bomberman.message.Topic;
 import com.example.bomberman.model.Move;
-import com.example.bomberman.model.game.*;
 import com.example.bomberman.model.game.dynamic.pawn.Pawn;
 import com.example.bomberman.model.game.dynamic.pawn.Player;
 import com.example.bomberman.network.ConnectionPool;
@@ -18,8 +17,6 @@ import java.util.*;
 
 public class GameMechanics implements Tickable {
 
-    private Logger log = LoggerFactory.getLogger(GameMechanics.class);
-
     private GameEntityRepository gameEntityRepository;
 
     //private static AtomicLong gameObjId = new AtomicLong();
@@ -31,24 +28,28 @@ public class GameMechanics implements Tickable {
 
     private GameEngine gameEngine;
 
+    private final Logger log = LoggerFactory.getLogger(GameMechanics.class);
+
     public GameMechanics(InputQueue inputQueue, Replicator replicator) {
         this.inputQueue = inputQueue;
         this.replicator = replicator;
         this.gameEntityRepository = new GameEntityRepositoryImpl();
-        this.gameEngine = new GameEngine(gameEntityRepository);
         this.inputEngine = new InputEngine(inputQueue);
     }
 
-    public void generateGameObjects() {
+    public void createGame() {
+
         replicator.getConnectionPool().getPool().forEach(ConnectionPool.PARALLELISM_LEVEL,
-                (name, webSocketSession)  -> {
+                (name, webSocketSession) -> {
                     inputEngine.addPlayer(name);
                     Player player = new Player(inputEngine.getAction(name), gameEntityRepository, name);
-                    player.setEntityPosition(new Vector2(1,1));
                     gameEntityRepository.addPlayer(player);
                     replicator.writePossess(webSocketSession, player.getId());
                     //gameObjId++;
         });
+
+        this.gameEngine = new GameEngine(gameEntityRepository);
+        this.gameEngine.setup();
 
         new Thread(inputEngine).start();
 
@@ -61,6 +62,10 @@ public class GameMechanics implements Tickable {
         gameObjectRepository.add(new Wall(gameObjId.getAndIncrement(), new Point(100, 10)));
         gameObjectRepository.add(new Wall(gameObjId.getAndIncrement(), new Point(10, 100)));*/
         //replicator.broadcast(Topic.REPLICA, gameObjectRepository.getStaticGameObjects());
+
+    }
+    public void spawnPlayers() {
+
 
     }
 

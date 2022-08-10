@@ -8,6 +8,6 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Size {
-    private int wight;
+    private int weight;
     private int height;
 }

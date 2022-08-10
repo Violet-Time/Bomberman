@@ -1,10 +1,12 @@
 package com.example.bomberman.tick.Game;
 
+import com.example.bomberman.model.Connection;
 import com.example.bomberman.model.game.Vector2;
 import com.example.bomberman.model.game.dynamic.Bomb;
 import com.example.bomberman.model.game.dynamic.Fire;
 import com.example.bomberman.model.game.dynamic.pawn.Bot;
 import com.example.bomberman.model.game.dynamic.pawn.Pawn;
+import com.example.bomberman.model.game.dynamic.pawn.Player;
 import com.example.bomberman.model.game.staticObj.bonus.Bonus;
 import com.example.bomberman.model.game.staticObj.bonus.BonusType;
 import com.example.bomberman.model.game.staticObj.tile.Tile;
@@ -21,21 +23,23 @@ import java.util.List;
 
 public class GameEngine {
 
-    @JsonIgnore
-    private Logger log = LoggerFactory.getLogger(GameEngine.class);
-    public static final int tileSize = 32;
-    private int tilesX = 27;
-    private int tilesY = 17;
+    public static final int TILE_SIZE = 32;
+    private static final int TILES_X = 27;
+    private static final int TILES_Y = 17;
     //size: {},
     private int fps = 50;
     private int botsCount = 3; /* 0 - 3 */
     private int playersCount = 1; /* 1 - 2 */
-    private int bonusesPercent = 16;
+    private final int bonusesPercent = 16;
     private final GameEntityRepository gameEntityRepository;
+
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     public GameEngine(GameEntityRepository gameEntityRepository) {
         this.gameEntityRepository = gameEntityRepository;
-        setup();
+        this.playersCount = gameEntityRepository.playersCount();
+        this.botsCount = 4 - playersCount;
     }
 
 
@@ -71,9 +75,9 @@ public class GameEngine {
         //gameObjectRepository.update();
     }
     public void drawTiles() {
-        for (int i = 0; i < this.tilesY; i++) {
-            for (int j = 0; j < this.tilesX; j++) {
-                if ((i == 0 || j == 0 || i == this.tilesY - 1 || j == this.tilesX - 1) ||
+        for (int i = 0; i < this.TILES_Y; i++) {
+            for (int j = 0; j < this.TILES_X; j++) {
+                if ((i == 0 || j == 0 || i == this.TILES_Y - 1 || j == this.TILES_X - 1) ||
                         (j % 2 == 0 && i % 2 == 0)) {
                     // Wall tiles
                     Wall wall = new Wall(gameEntityRepository);
@@ -86,9 +90,9 @@ public class GameEngine {
 
                     // Wood tiles
                     if (!(i <= 2 && j <= 2)
-                            && !(i >= this.tilesY - 3 && j >= this.tilesX - 3)
-                            && !(i <= 2 && j >= this.tilesX - 3)
-                            && !(i >= this.tilesY - 3 && j <= 2)) {
+                            && !(i >= this.TILES_Y - 3 && j >= this.TILES_X - 3)
+                            && !(i <= 2 && j >= this.TILES_X - 3)
+                            && !(i >= this.TILES_Y - 3 && j <= 2)) {
 
                         Wood wood = new Wood(gameEntityRepository);
                         wood.setEntityPosition(new Vector2( j, i));
@@ -120,10 +124,10 @@ public class GameEngine {
                     break;
                 }
 
-                if ((j == 0 && wood.getBitmapPosition().getX() < this.tilesX / 2 && wood.getBitmapPosition().getY() < this.tilesY / 2)
-                        || (j == 1 && wood.getBitmapPosition().getX() < this.tilesX / 2 && wood.getBitmapPosition().getY() > this.tilesY / 2)
-                        || (j == 2 && wood.getBitmapPosition().getX() > this.tilesX / 2 && wood.getBitmapPosition().getY() < this.tilesX / 2)
-                        || (j == 3 && wood.getBitmapPosition().getX() > this.tilesX / 2 && wood.getBitmapPosition().getY() > this.tilesX / 2)) {
+                if ((j == 0 && wood.getBitmapPosition().getX() < this.TILES_X / 2 && wood.getBitmapPosition().getY() < this.TILES_Y / 2)
+                        || (j == 1 && wood.getBitmapPosition().getX() < this.TILES_X / 2 && wood.getBitmapPosition().getY() > this.TILES_Y / 2)
+                        || (j == 2 && wood.getBitmapPosition().getX() > this.TILES_X / 2 && wood.getBitmapPosition().getY() < this.TILES_X / 2)
+                        || (j == 3 && wood.getBitmapPosition().getX() > this.TILES_X / 2 && wood.getBitmapPosition().getY() > this.TILES_X / 2)) {
 
                     int typePosition = placedCount % 3;
                     Bonus bonus = new Bonus(gameEntityRepository, BonusType.values()[typePosition]);
@@ -143,19 +147,19 @@ public class GameEngine {
     public void spawnBots() {
 
         if (this.botsCount >= 1) {
-            Bot bot = new Bot(gameEntityRepository, new Vector2(1, this.tilesY - 2));
+            Bot bot = new Bot(gameEntityRepository, new Vector2(1, this.TILES_Y - 2));
             //bot.setEntityPosition(new Point(1, this.tilesY - 2));
             gameEntityRepository.addBot(bot);
         }
 
         if (this.botsCount >= 2) {
-            Bot bot = new Bot(gameEntityRepository, new Vector2(this.tilesX - 2, 1));
+            Bot bot = new Bot(gameEntityRepository, new Vector2(this.TILES_X - 2, 1));
             //bot.setEntityPosition(new Point(this.tilesX - 2, 1));
             gameEntityRepository.addBot(bot);
         }
 
         if (this.botsCount >= 3) {
-            Bot bot = new Bot(gameEntityRepository, new Vector2(this.tilesX - 2, this.tilesY - 2));
+            Bot bot = new Bot(gameEntityRepository, new Vector2(this.TILES_X - 2, this.TILES_Y - 2));
             //bot.setEntityPosition(new Point(this.tilesX - 2, this.tilesY - 2));
             gameEntityRepository.addBot(bot);
         }
@@ -168,15 +172,27 @@ public class GameEngine {
     }
 
     public void spawnPlayers() {
+        List<Player> players = gameEntityRepository.getAllPlayers();
+        for (int i = 0; i < players.size(); i++) {
+            if (i == 0) {
+                players.get(i).setEntityPosition(new Vector2(1, 1));
+            }
 
-        /*if (this.playersCount >= 1) {
-            gameObjectRepository.addPlayer(new Pawn(new Point( 1, 1)));
+            if (i == 1) {
+                players.get(i).setEntityPosition(new Vector2(this.TILES_X - 2, this.TILES_Y - 2));
+            }
+
+            if (i == 2) {
+                players.get(i).setEntityPosition(new Vector2(this.TILES_X - 2, 1));
+            }
+
+            if (i == 3) {
+                players.get(i).setEntityPosition(new Vector2(1, this.TILES_Y - 2));
+            }
         }
-
-        if (this.playersCount >= 2) {
-            gameObjectRepository.addPlayer(new Pawn(new Point( this.tilesX - 2, this.tilesY - 2)));
-        }*/
     }
+
+
 
     /*public void gameOver(String status) {
         if (gGameEngine.menu.visible) { return; }

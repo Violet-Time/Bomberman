@@ -14,14 +14,6 @@ import java.util.function.Function;
 
 
 public class Bomb extends DynamicGameObject {
-    @JsonIgnore
-    public final static String TYPE = "Bomb";
-
-    /**
-     * Bitmap dimensions
-     */
-    @JsonIgnore
-    private static final Size size = new Size(28, 28);
 
     /**
      * How far the fire reaches when bomb explodes
@@ -48,11 +40,19 @@ public class Bomb extends DynamicGameObject {
     Function<Void, Void> explodeListener = null;
 
     @JsonIgnore
+    public final static String TYPE = "Bomb";
+
+    /**
+     * Bitmap dimensions
+     */
+    @JsonIgnore
+    private static final Size size = new Size(28, 28);
+
+    @JsonIgnore
     Pawn pawn = null;
 
     public Bomb(GameEntityRepository gameEntityRepository, int strength) {
         super(gameEntityRepository, size, TYPE);
-
         this.strength = strength;
 
 
@@ -84,7 +84,7 @@ public class Bomb extends DynamicGameObject {
         // Fire in all directions!
         //List<Point> positions = getDangerPositions();
         for (Fire fire : fires) {
-            gameEntityRepository.addFire(fire);
+            //gameEntityRepository.addFire(fire);
 
             Material material = gameEntityRepository.getTileMaterial(fire.getEntityPosition());
             if (material == Material.WOOD) {
@@ -157,11 +157,6 @@ public class Bomb extends DynamicGameObject {
     }
 
     public void setExplodeListener(Function<Void, Void> listener) {
-        List<Vector2> positions = getDangerPositions();
-        for (Vector2 position : positions) {
-            fire(position);
-        }
-
         this.explodeListener = listener;
     }
 
@@ -171,5 +166,15 @@ public class Bomb extends DynamicGameObject {
 
     public boolean isExploded() {
         return exploded;
+    }
+
+    @Override
+    public void setEntityPosition(Vector2 entityPosition) {
+        super.setEntityPosition(entityPosition);
+
+        List<Vector2> positions = getDangerPositions();
+        for (Vector2 position : positions) {
+            fire(position);
+        }
     }
 }

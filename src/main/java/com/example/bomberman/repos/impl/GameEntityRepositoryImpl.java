@@ -10,11 +10,16 @@ import com.example.bomberman.model.game.dynamic.pawn.Player;
 import com.example.bomberman.model.game.staticObj.bonus.Bonus;
 import com.example.bomberman.model.game.staticObj.tile.*;
 import com.example.bomberman.repos.GameEntityRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class GameEntityRepositoryImpl implements GameEntityRepository {
 
+    private final AtomicLong idGenerator = new AtomicLong();
     class Cell {
         final Set<Bot> bots;
         final Set<Tile> tiles;
@@ -36,6 +41,9 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     private final Map<Vector2, Cell> gameEntityGrid;
     private final Queue<GameEntity> firstRead;
 
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(GameEntityRepositoryImpl.class);
+
     public GameEntityRepositoryImpl() {
         this.playersNameKey = new HashMap<>();
         this.gameEntityGrid = new HashMap<>();
@@ -51,12 +59,14 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
         Cell cell = getCell(player.getEntityPosition());
         cell.players.add(player);
         playersNameKey.put(player.getName(), player);
+        log.debug("Add player\n" + player);
         return true;
     }
 
     @Override
     public boolean addBot(Bot bot) {
         getCell(bot.getEntityPosition()).bots.add(bot);
+        log.debug("Add bot\n" + bot);
         return true;
     }
 
@@ -64,19 +74,21 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     public boolean addTile(Tile tile) {
         getCell(tile.getEntityPosition()).tiles.add(tile);
         firstRead.add(tile);
+        log.debug("Add tile\n" + tile);
         return true;
     }
 
     @Override
     public boolean addBomb(Bomb bomb) {
         getCell(bomb.getEntityPosition()).bombs.add(bomb);
+        log.debug("Add bomb\n" + bomb);
         return true;
     }
 
     @Override
     public boolean addBonus(Bonus bonus) {
         getCell(bonus.getEntityPosition()).bonuses.add(bonus);
-        //firstRead.add(bonus);
+        log.debug("Add bonus\n" + bonus);
         return true;
     }
 
@@ -86,6 +98,7 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
         if (fire.getBomb().isExploded()) {
             firstRead.add(fire);
         }
+        log.debug("Add fire\n" + fire);
         return true;
     }
 
@@ -283,7 +296,17 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     }
 
     @Override
+    public boolean removePlayer(Player player) {
+        firstRead.add(player);
+        playersNameKey.remove(player.getName());
+        log.debug("Remove player\n" + player);
+        return getCell(player.getEntityPosition()).players.remove(player);
+    }
+
+    @Override
     public boolean removeBot(Bot bot) {
+        firstRead.add(bot);
+        log.debug("Remove bot\n" + bot);
         return getCell(bot.getEntityPosition()).bots.remove(bot);
     }
 
@@ -291,28 +314,37 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     public boolean removeTile(Tile tile) {
         firstRead.add(tile);
         getBonuses(tile.getEntityPosition()).stream().findFirst().ifPresent(firstRead::add);
+        log.debug("Remove tile\n" + tile);
         return getCell(tile.getEntityPosition()).tiles.remove(tile);
     }
 
     @Override
     public boolean removeBomb(Bomb bomb) {
+        log.debug("Remove bomb\n" + bomb);
         return getCell(bomb.getEntityPosition()).bombs.remove(bomb);
     }
 
     @Override
     public boolean removeBonus(Bonus bonus) {
         firstRead.add(bonus);
+        log.debug("Remove bonus\n" + bonus);
         return getCell(bonus.getEntityPosition()).bonuses.remove(bonus);
     }
 
     @Override
     public boolean removeFire(Fire fire) {
         firstRead.add(fire);
+        log.debug("Remove fire\n" + fire);
         return getCell(fire.getEntityPosition()).fires.remove(fire);
     }
 
     @Override
     public int playersCount() {
         return playersNameKey.size();
+    }
+
+    @Override
+    public long generateId() {
+        return idGenerator.getAndIncrement();
     }
 }

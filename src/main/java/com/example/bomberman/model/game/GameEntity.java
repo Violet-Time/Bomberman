@@ -9,14 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-//@JsonIgnoreProperties(value = {"log", "size", "bitmapPosition", "entityPosition", "gameEntityRepository"})
 public abstract class GameEntity extends Rect {
 
     protected final long id;
-
-    @JsonIgnore
-    private Logger log = LoggerFactory.getLogger(GameEntity.class);
-
     @JsonIgnore
     protected final Rect collision;
 
@@ -24,10 +19,12 @@ public abstract class GameEntity extends Rect {
 
     @JsonIgnore
     protected final GameEntityRepository gameEntityRepository;
+    @JsonIgnore
+    private final Logger log = LoggerFactory.getLogger(GameEntity.class);
 
     public GameEntity(GameEntityRepository gameEntityRepository, Size size, String type) {
         super(size);
-        this.id = GameObjectRepositoryImpl.getAndIncrementGameObjId();
+        this.id = gameEntityRepository.generateId();
         this.collision = new Rect(size);
         this.type = type;
         this.gameEntityRepository = gameEntityRepository;
@@ -79,7 +76,7 @@ public abstract class GameEntity extends Rect {
             return false;
         }
 
-        log.debug("{" + this + "\n" + other + "}");
+        log.debug("Colliding\n{" + this + "\n" + other + "}");
 
         if (other.getClass() == getClass()) {
             return collision.isColliding(((GameEntity) other).collision);
@@ -90,7 +87,7 @@ public abstract class GameEntity extends Rect {
 
     @JsonProperty
     public Vector2 getPosition() {
-        return getBitmapPosition();/*.sub(new Point(size.getHeight() / 2, size.getWight() / 2));*/
+        return getBitmapPosition();
     }
 
     @Override
@@ -113,7 +110,7 @@ public abstract class GameEntity extends Rect {
                 ", collision=" + collision +
                 ", type='" + type + '\'' +
                 ", size=" + size + '\'' +
-                super.toString() +
+                " {" + super.toString() + "}" +
                 '}';
     }
 }

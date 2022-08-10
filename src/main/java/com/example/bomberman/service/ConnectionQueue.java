@@ -9,9 +9,9 @@ import java.util.concurrent.SynchronousQueue;
 
 @Repository
 public class ConnectionQueue {
-    private SynchronousQueue<Connection> queue = new SynchronousQueue<>();
+    private BlockingQueue<Connection> queue = new LinkedBlockingQueue<>();
 
-    public SynchronousQueue<Connection> getQueue() {
+    public BlockingQueue<Connection> getQueue() {
         return queue;
     }
 }

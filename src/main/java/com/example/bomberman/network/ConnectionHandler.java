@@ -1,6 +1,7 @@
 package com.example.bomberman.network;
 
 import com.example.bomberman.message.Message;
+import com.example.bomberman.repos.GameRepository;
 import com.example.bomberman.repos.GameRepositoryImpl;
 import com.example.bomberman.util.JsonHelper;
 import org.slf4j.Logger;
@@ -26,20 +27,23 @@ import static java.util.stream.Collectors.toList;
 public class ConnectionHandler extends TextWebSocketHandler implements WebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
-    private GameRepositoryImpl gameRepository;
+    private GameRepository gameRepository;
 
-    public ConnectionHandler(GameRepositoryImpl gameRepository) {
+    public ConnectionHandler(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info("new session");
-        log.info(session.getUri().toString());
+
+        log.info("new session {}", session.getUri());
+
         Map<String, List<String>> query = splitQuery(Objects.requireNonNull(session.getUri()));
+
         if (query.get("gameId") != null && query.get("name") != null) {
-            log.info(query.get("gameId").get(0));
-            log.info(query.get("name").get(0));
+
+            log.debug("gameId = {} name = {}", query.get("gameId").get(0), query.get("name").get(0));
+
             gameRepository.getSession(Long.valueOf(query.get("gameId").get(0))).connectSessionPlayer(session, query.get("name").get(0));
         }
 

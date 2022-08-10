@@ -16,8 +16,8 @@ public class Utils {
      * Convert bitmap pixels position to entity on grid position.
      */
     public static Vector2 convertToEntityPosition(Vector2 pixels) {
-        Vector2 position = new Vector2(Math.round(pixels.getX() / GameEngine.tileSize),
-                                    Math.round(pixels.getY() /GameEngine.tileSize));
+        Vector2 position = new Vector2(Math.round(pixels.getX() / GameEngine.TILE_SIZE),
+                                    Math.round(pixels.getY() /GameEngine.TILE_SIZE));
         return position;
     }
 
@@ -25,8 +25,8 @@ public class Utils {
     * Convert entity on grid position to bitmap pixels position.
     */
     public static Vector2 convertToBitmapPosition(Vector2 entity) {
-        Vector2 position = new Vector2(Math.round(entity.getX() * GameEngine.tileSize),
-                Math.round(entity.getY() * GameEngine.tileSize));
+        Vector2 position = new Vector2(Math.round(entity.getX() * GameEngine.TILE_SIZE),
+                Math.round(entity.getY() * GameEngine.TILE_SIZE));
         return position;
     }
 }

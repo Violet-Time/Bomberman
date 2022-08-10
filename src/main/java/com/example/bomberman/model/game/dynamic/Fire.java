@@ -5,26 +5,17 @@ import com.example.bomberman.repos.GameEntityRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Fire extends DynamicGameObject {
-    @JsonIgnore
-    private static final Size size = new Size(38, 38);
-    @JsonIgnore
-    public final static String TYPE = "Fire";
 
     /**
      * The bomb that triggered this fire
      */
     private final Bomb bomb;
-    /**
-     * Timer in frames
-     */
-    @JsonIgnore
-    private int timer = 0;
 
-    /**
-     * Max timer value in seconds
-     */
     @JsonIgnore
-    private float timerMax = 0.3f;
+    public final static String TYPE = "Fire";
+
+    @JsonIgnore
+    private static final Size size = new Size(38, 38);
 
     public Fire(GameEntityRepository gameEntityRepository, Bomb bomb) {
         super(gameEntityRepository, size, TYPE);
@@ -36,10 +27,6 @@ public class Fire extends DynamicGameObject {
         if (bomb.isExploded()) {
             this.remove();
         }
-        /*this.timer++;
-        if (this.timer > this.timerMax * Ticker.FPS) {
-
-        }**/
     }
 
     public void remove() {
@@ -49,15 +36,8 @@ public class Fire extends DynamicGameObject {
             this.bomb.explodeListener = null;
         }
 
-        //gGameEngine.stage.removeChild(this.bmp);
-
-
-
-
-        //this.bomb.getFires().remove(this);
         gameEntityRepository.removeFire(this);
 
-        //gameEntityRepository.removeBomb(this.bomb);
     }
 
     public Bomb getBomb() {

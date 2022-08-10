@@ -57,6 +57,10 @@ public final class Vector2 implements Collider {
         return new Vector2(this.x * a, this.y * a);
     }
 
+    public int magnitude() {
+        return (int) Math.sqrt(Math.pow(x, 2) + Math.pow(y,2));
+    }
+
     /**
      * @param o - other object to check equality with
      * @return true if two points are equal and not null.
