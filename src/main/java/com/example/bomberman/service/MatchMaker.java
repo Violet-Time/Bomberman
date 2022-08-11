@@ -14,8 +14,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MatchMaker implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(MatchMaker.class);
-    private GameService gameService;
-    private ConnectionQueue connectionQueue;
+    private static final int WAITING_TIME = 30;
+    private final GameService gameService;
+    private final ConnectionQueue connectionQueue;
 
     public MatchMaker(GameService gameService, ConnectionQueue connectionQueue) {
         this.gameService = gameService;
@@ -47,18 +48,19 @@ public class MatchMaker implements Runnable {
                     }
 
                     gameService.connect(candidate.getName(), gameSession.getId());
-                    candidate.setGameId(gameSession.getId());
+                    candidate.getGameId().exchange(gameSession.getId());
                 }
 
             } catch (InterruptedException e) {
                 log.warn("Timeout reached");
             }
 
-            log.debug("{}", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start));
+            log.debug("waiting time {}", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start));
 
             if (gameSession != null &&
                     gameSession.getPlayersInGame() >= 1 &&
-                        (gameSession.getPlayersInGame() == 4 || TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start) > 30)) {
+                        (gameSession.getPlayersInGame() == GameSession.MAX_PLAYERS_IN_GAME ||
+                            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start) > WAITING_TIME)) {
                 gameService.start(gameSession.getId());
                 gameSession = null;
             }

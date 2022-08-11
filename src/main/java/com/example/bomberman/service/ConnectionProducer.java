@@ -5,14 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.Exchanger;
+
 @Service
 public class ConnectionProducer {
     private static final Logger log = LoggerFactory.getLogger(ConnectionProducer.class);
-    /*private static final String[] names = {"John", "Paul", "George", "Someone else"};
 
-    private static AtomicLong id = new AtomicLong();*/
-
-    private ConnectionQueue connectionQueue;
+    private final ConnectionQueue connectionQueue;
 
     public ConnectionProducer(ConnectionQueue connectionQueue) {
         this.connectionQueue = connectionQueue;
@@ -20,36 +19,30 @@ public class ConnectionProducer {
 
     public long produce(String name) {
 
-        Connection connection = new Connection(-1, name);
+        Connection connection = new Connection(new Exchanger<>(), name);
 
         while (!connectionQueue.getQueue().offer(connection)) {
             try {
                 Thread.sleep(1_000);
             } catch (InterruptedException e) {
-                log.info("Interrupted");
+                log.warn("Interrupted");
             }
         }
         log.info("Connection {} added.", name);
 
-        log.info("Lock {}", connection.getName());
-        /*try {
-            connectionQueue.getQueue().put(connection);
+        log.debug("Lock {}", connection.getName());
 
+        long gameId = -1L;
+
+        try {
+            gameId = connection.getGameId().exchange(gameId);
         } catch (InterruptedException e) {
+            log.warn("Interrupted");
             throw new RuntimeException(e);
-        }*/
-
-
-
-        while (connection.getGameId() == -1) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-            }
         }
 
-        log.info("Unlock join {}", connection.getName());
+        log.debug("Unlock {} game id = {}", connection.getName(), gameId);
 
-        return connection.getGameId();
+        return gameId;
     }
 }
