@@ -1,6 +1,7 @@
 package com.example.bomberman.service;
 
-import com.example.bomberman.model.Connection;
+import com.example.bomberman.model.ExchangerGameId;
+import com.example.bomberman.repos.ConnectionQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,9 @@ public class ConnectionProducer {
 
     public long produce(String name) {
 
-        Connection connection = new Connection(new Exchanger<>(), name);
+        ExchangerGameId exchangerGameId = new ExchangerGameId(new Exchanger<>(), name);
 
-        while (!connectionQueue.getQueue().offer(connection)) {
+        while (!connectionQueue.getQueue().offer(exchangerGameId)) {
             try {
                 Thread.sleep(1_000);
             } catch (InterruptedException e) {
@@ -30,18 +31,18 @@ public class ConnectionProducer {
         }
         log.info("Connection {} added.", name);
 
-        log.debug("Lock {}", connection.getName());
+        log.debug("Lock {}", exchangerGameId.name());
 
         long gameId = -1L;
 
         try {
-            gameId = connection.getGameId().exchange(gameId);
+            gameId = exchangerGameId.gameId().exchange(gameId);
         } catch (InterruptedException e) {
             log.warn("Interrupted");
             throw new RuntimeException(e);
         }
 
-        log.debug("Unlock {} game id = {}", connection.getName(), gameId);
+        log.debug("Unlock {} game id = {}", exchangerGameId.gameId(), gameId);
 
         return gameId;
     }

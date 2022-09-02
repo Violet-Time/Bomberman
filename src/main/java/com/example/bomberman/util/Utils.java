@@ -1,7 +1,7 @@
 package com.example.bomberman.util;
 
-import com.example.bomberman.model.game.Vector2;
-import com.example.bomberman.tick.Game.GameEngine;
+import com.example.bomberman.service.tick.gameMechanics.Vector2;
+import com.example.bomberman.service.tick.gameMechanics.GameEngine;
 
 public class Utils {
     /**

@@ -13,7 +13,7 @@ var Player = function (id, position) {
     };
 
     var spriteSheet = new createjs.SpriteSheet({
-        images: [gGameEngine.asset.pawn],
+        images: id === gInputEngine.possessed ? [gGameEngine.asset.pawn.player] : [gGameEngine.asset.pawn.rival],
         frames: {
             width: size.w,
             height: size.h,

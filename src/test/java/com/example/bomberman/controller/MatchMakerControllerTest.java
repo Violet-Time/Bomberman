@@ -1,6 +1,6 @@
 package com.example.bomberman.controller;
 
-import com.example.bomberman.service.ConnectionQueue;
+import com.example.bomberman.repos.ConnectionQueue;
 import com.example.bomberman.repos.GameRepositoryImpl;
 import com.example.bomberman.service.GameServiceImpl;
 import com.example.bomberman.service.MatchMaker;
@@ -19,7 +19,7 @@ public class MatchMakerControllerTest {
         GameRepositoryImpl gameRepository = new GameRepositoryImpl();
         GameServiceImpl gameService = new GameServiceImpl(gameRepository);
         MatchMaker matchMaker = new MatchMaker(gameService, connectionQueue);
-        matchMakerController = new MatchMakerController(matchMaker);
+        //matchMakerController = new MatchMakerController(matchMaker);
     }
 
     @Test

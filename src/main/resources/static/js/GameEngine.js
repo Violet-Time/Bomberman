@@ -1,11 +1,13 @@
 var GameEngine = function () {
     this.asset = {
-        pawn: null,
+        pawn: {},
         bomb: null,
         fire: null,
         tile: {},
         bonus: {}
     };
+
+    this.serverProxy = new ServerProxy();
 };
 
 GameEngine.prototype.load = function () {
@@ -17,7 +19,8 @@ GameEngine.prototype.load = function () {
     var queue = new createjs.LoadQueue();
     var self = this;
     queue.addEventListener("complete", function () {
-        self.asset.pawn = queue.getResult("pawn");
+        self.asset.pawn.player = queue.getResult("pawn_player");
+        self.asset.pawn.rival = queue.getResult("pawn_rival");
         self.asset.tile.grass = queue.getResult("tile_grass");
         self.asset.tile.wall = queue.getResult("tile_wall");
         self.asset.tile.wood = queue.getResult("tile_wood");
@@ -29,7 +32,8 @@ GameEngine.prototype.load = function () {
         self.initCanvas();
     });
     queue.loadManifest([
-        {id: "pawn", src: "img/betty.png"},
+        {id: "pawn_player", src: "img/betty.png"},
+        {id: "pawn_rival", src: "img/george.png"},
         {id: "tile_grass", src: "img/tile_grass.png"},
         {id: "tile_wall", src: "img/tile_wall.png"},
         {id: "tile_wood", src: "img/tile_wood.png"},
@@ -47,8 +51,19 @@ GameEngine.prototype.initCanvas = function () {
     this.stage.update();
 };
 
-GameEngine.prototype.startGame = function () {
+GameEngine.prototype.matchmaking = function () {
+    var gameId = gMatchMaker.getSessionId();
+    var name = gMatchMaker.settings.data
+    this.serverProxy.connectToGameServer(gameId, name);
+
+    this.game = new Game(this.stage);
+
     this.menu.hide();
+    this.menu.showMatchmaking();
+    this.stage.update();
+};
+
+GameEngine.prototype.startGame = function () {
     this.game = new Game(this.stage);
     this.game.start();
 };

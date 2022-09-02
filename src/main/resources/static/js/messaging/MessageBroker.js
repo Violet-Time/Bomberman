@@ -25,6 +25,10 @@ var MessageBroker = function () {
 MessageBroker.prototype.handleReplica = function (msg) {
     console.log(msg);
     //var gameObjects = JSON.parse(msg.data);
+
+    if (!gGameEngine.game.started) {
+        gGameEngine.game.start();
+    }
     gGameEngine.game.gc(msg.data);
 };
 
@@ -51,6 +55,7 @@ MessageBroker.prototype.handlePawn = function(obj) {
         player.bmp.x = position.x;
         player.bmp.y = position.y;
         player.direction = direction;
+        player.alive = obj.alive;
     } else {
         player = new Player(obj.id, position);
         gGameEngine.game.players.push(player);

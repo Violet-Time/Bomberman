@@ -1,14 +1,13 @@
 package com.example.bomberman.service;
 
-import com.example.bomberman.model.Connection;
+import com.example.bomberman.model.ExchangerGameId;
 import com.example.bomberman.model.GameSession;
+import com.example.bomberman.repos.ConnectionQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -38,7 +37,7 @@ public class MatchMaker implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
 
             try {
-                Connection candidate = connectionQueue.getQueue().poll(10_000, TimeUnit.MILLISECONDS);
+                ExchangerGameId candidate = connectionQueue.getQueue().poll(10_000, TimeUnit.MILLISECONDS);
 
                 if (candidate != null) {
 
@@ -47,8 +46,8 @@ public class MatchMaker implements Runnable {
                         start = System.currentTimeMillis();
                     }
 
-                    gameService.connect(candidate.getName(), gameSession.getId());
-                    candidate.getGameId().exchange(gameSession.getId());
+                    gameService.connect(candidate.name(), gameSession.getId());
+                    candidate.gameId().exchange(gameSession.getId());
                 }
 
             } catch (InterruptedException e) {

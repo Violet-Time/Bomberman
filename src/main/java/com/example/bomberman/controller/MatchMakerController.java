@@ -12,20 +12,15 @@ public class MatchMakerController {
 
     private static final Logger log = LoggerFactory.getLogger(MatchMakerController.class);
 
-    private ConnectionProducer connectionProducer;
+    private final ConnectionProducer connectionProducer;
 
     public MatchMakerController(ConnectionProducer connectionProducer) {
         this.connectionProducer = connectionProducer;
     }
 
-    @PostMapping(path = "/join"/*,
-                consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-                produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE*/)
+    @PostMapping(path = "/join")
     public String join(@RequestParam String name) {
-        //return connectionProducer.produce(name);
-
         log.info("{} join", name);
-        //gameService.
         return "" + connectionProducer.produce(name);
     }
 }

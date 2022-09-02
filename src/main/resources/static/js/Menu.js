@@ -21,6 +21,25 @@ Menu.prototype.hide = function () {
     this.elements = [];
 };
 
+Menu.prototype.showMatchmaking = function () {
+    this.drawBackground();
+    this.showGameOverText("Matchmaking...");
+    var timer = 0;
+    var timerText = new createjs.Text(timer, "40px Helvetica", "#ff4444");
+    timerText.x = (gCanvas.getWidthInPixel() - timerText.getMeasuredWidth()) / 2;
+    timerText.y = 100;
+    this.stage.addChild(timerText);
+    this.elements.push(timerText);
+
+
+    var self = this;
+    createjs.Ticker.framerate = 1;
+    createjs.Ticker.addEventListener('tick', function () {
+        timerText.text = ++timer;
+        self.stage.update();
+    });
+};
+
 Menu.prototype.showGameOver = function (text) {
     this.show();
     this.showGameOverText(text);
@@ -68,7 +87,7 @@ Menu.prototype.drawPlayButtonBackground = function (x, y, buttonSize) {
     this.setHandCursor(background);
 
     background.addEventListener('click', function() {
-        gGameEngine.startGame()
+        gGameEngine.matchmaking();
     });
 };
 
@@ -83,7 +102,7 @@ Menu.prototype.drawPlayButtonText = function (x, y, buttonSize) {
 };
 
 Menu.prototype.drawPawnIcon = function (x, y, buttonSize) {
-    var singleIcon = new createjs.Bitmap(gGameEngine.asset.pawn);
+    var singleIcon = new createjs.Bitmap(gGameEngine.asset.pawn.player);
     var pawnIconSize = 48;
     singleIcon.sourceRect = new createjs.Rectangle(0, 0, pawnIconSize, pawnIconSize);
     // counting central position inside background

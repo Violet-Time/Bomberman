@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class GameRepositoryImpl implements GameRepository {
-    private ConcurrentHashMap<Long, GameSession> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, GameSession> map = new ConcurrentHashMap<>();
 
     public void put(GameSession session) {
         map.put(session.getId(), session);

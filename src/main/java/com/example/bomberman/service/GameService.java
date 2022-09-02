@@ -1,9 +1,7 @@
 package com.example.bomberman.service;
 
-import com.example.bomberman.model.Connection;
 import com.example.bomberman.model.GameSession;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public interface GameService {

@@ -7,21 +7,25 @@ var Game = function (stage) {
     this.bombs =  [];
     this.bonuses = [];
 
-    this.serverProxy = new ServerProxy();
+    this.started = false;
+
+
 };
 
 // when game starts we connect socket to URL in ClusterSettings
 Game.prototype.start = function () {
     gInputEngine.setupBindings();
-    var gameId = gMatchMaker.getSessionId();
-    var name = gMatchMaker.settings.data
-    this.serverProxy.connectToGameServer(gameId, name);
+
     this.drawBackground();
 
+    createjs.Ticker.removeAllEventListeners('tick');
     var self = this;
+    createjs.Ticker.framerate = 60;
     createjs.Ticker.addEventListener('tick', function () {
         self.update();
     });
+
+    this.started = true;
 };
 
 Game.prototype.update = function () {
@@ -66,6 +70,10 @@ Game.prototype.drawBackground = function () {
 // Назвал бы его не GarbageCollector а ObjectsManager потому что он не только удаляет объекты, а так же создает и
 // изменяет (Pawn и  Bomb)
 Game.prototype.gc = function (gameObjects) {
+    if (!this.started) {
+        this.started = true;
+    }
+
     var survivors = new Set();
 
     // Стоит отметить что все объекты изначально разделяются по ID

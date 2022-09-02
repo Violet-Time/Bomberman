@@ -1,25 +1,10 @@
 package com.example.bomberman.repos;
 
-import com.example.bomberman.model.Move;
-import com.example.bomberman.model.game.*;
-import com.example.bomberman.model.game.dynamic.Bomb;
-import com.example.bomberman.model.game.dynamic.DynamicGameObject;
-import com.example.bomberman.model.game.dynamic.Fire;
-import com.example.bomberman.model.game.dynamic.pawn.Player;
-import com.example.bomberman.model.game.staticObj.StaticGameObject;
-import com.example.bomberman.model.game.staticObj.bonus.Bonus;
-import com.example.bomberman.model.game.dynamic.pawn.Bot;
-import com.example.bomberman.model.game.dynamic.pawn.Pawn;
-import com.example.bomberman.model.game.staticObj.tile.*;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-
 public class GameObjectRepositoryImpl  {
 
     /*private List<StaticGameObject> staticGameObjects;
     private List<DynamicGameObject> dynamicGameObjects;*/
-    private final List<Bot> bots;
+    /*private final List<Bot> bots;
     private final List<Tile> tiles;
     private final List<Bomb> bombs;
     private final List<Bonus> bonuses;
@@ -142,7 +127,7 @@ public class GameObjectRepositoryImpl  {
     /**
      * Returns tile at given position.
      */
-    public Tile getTile(Vector2 position) {
+    /*public Tile getTile(Vector2 position) {
         for (Tile tile : tiles) {
             if (tile.comparePositions(position)) {
                 return tile;
@@ -154,7 +139,7 @@ public class GameObjectRepositoryImpl  {
     /**
      * Returns tile material at given position.
      */
-    public Material getTileMaterial(Vector2 position) {
+    /*public Material getTileMaterial(Vector2 position) {
         Tile tile = getTile(position);
 
         if (tile == null || tile instanceof Grass) {
@@ -298,7 +283,7 @@ public class GameObjectRepositoryImpl  {
         deleteBots.clear();
         /*tiles.removeAll(deleteTiles);
         deleteTiles.clear();*/
-        bombs.removeAll(deleteBombs);
+        /*bombs.removeAll(deleteBombs);
         deleteBombs.clear();
         bonuses.removeAll(deleteBonuses);
         deleteBonuses.clear();
@@ -307,5 +292,5 @@ public class GameObjectRepositoryImpl  {
     //@Override
     public void resetDirection() {
         players.values().stream().map(e -> (Pawn) e).forEach(Pawn::resetDirection);
-    }
+    }*/
 }

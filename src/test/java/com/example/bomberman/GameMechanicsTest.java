@@ -1,10 +1,10 @@
 package com.example.bomberman;
 
-import com.example.bomberman.message.Message;
-import com.example.bomberman.network.ConnectionPool;
-import com.example.bomberman.tick.GameMechanics;
-import com.example.bomberman.tick.InputQueue;
-import com.example.bomberman.tick.Replicator;
+import com.example.bomberman.model.message.Message;
+import com.example.bomberman.controller.network.ConnectionPool;
+import com.example.bomberman.service.tick.gameMechanics.GameMechanics;
+import com.example.bomberman.service.tick.InputQueue;
+import com.example.bomberman.service.tick.Replicator;
 import com.example.bomberman.util.JsonHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -1,14 +1,14 @@
 package com.example.bomberman.repos.impl;
 
-import com.example.bomberman.model.game.GameEntity;
-import com.example.bomberman.model.game.Vector2;
-import com.example.bomberman.model.game.dynamic.Bomb;
-import com.example.bomberman.model.game.dynamic.Fire;
-import com.example.bomberman.model.game.dynamic.pawn.Bot;
-import com.example.bomberman.model.game.dynamic.pawn.Pawn;
-import com.example.bomberman.model.game.dynamic.pawn.Player;
-import com.example.bomberman.model.game.staticObj.bonus.Bonus;
-import com.example.bomberman.model.game.staticObj.tile.*;
+import com.example.bomberman.service.tick.gameMechanics.GameEntity;
+import com.example.bomberman.service.tick.gameMechanics.Vector2;
+import com.example.bomberman.service.tick.gameMechanics.dynamic.Bomb;
+import com.example.bomberman.service.tick.gameMechanics.dynamic.Fire;
+import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Bot;
+import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
+import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Player;
+import com.example.bomberman.service.tick.gameMechanics.staticObj.bonus.Bonus;
+import com.example.bomberman.service.tick.gameMechanics.staticObj.tile.*;
 import com.example.bomberman.repos.GameEntityRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     private final AtomicLong idGenerator = new AtomicLong();
-    class Cell {
+    static class Cell {
         final Set<Bot> bots;
         final Set<Tile> tiles;
         final Set<Bomb> bombs;
@@ -36,10 +36,21 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
             this.fires = new HashSet<>();
             this.players = new HashSet<>();
         }
+
+        @Override
+        public String toString() {
+            return "Cell{" +
+                    "bots=" + bots +
+                    ", tiles=" + tiles +
+                    ", bombs=" + bombs +
+                    ", bonuses=" + bonuses +
+                    ", fires=" + fires +
+                    ", players=" + players +
+                    '}';
+        }
     }
     private final Map<String, Player> playersNameKey;
     private final Map<Vector2, Cell> gameEntityGrid;
-    private final Queue<GameEntity> firstRead;
 
     @JsonIgnore
     private final Logger log = LoggerFactory.getLogger(GameEntityRepositoryImpl.class);
@@ -47,7 +58,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     public GameEntityRepositoryImpl() {
         this.playersNameKey = new HashMap<>();
         this.gameEntityGrid = new HashMap<>();
-        this.firstRead = new LinkedList<>();
     }
 
     private Cell getCell(Vector2 vector2) {
@@ -56,24 +66,23 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public boolean addPlayer(Player player) {
+        playersNameKey.put(player.getName(), player);
         Cell cell = getCell(player.getEntityPosition());
         cell.players.add(player);
-        playersNameKey.put(player.getName(), player);
         log.debug("Add player\n" + player);
         return true;
     }
 
     @Override
     public boolean addBot(Bot bot) {
+        log.debug("Add bot {}", bot);
         getCell(bot.getEntityPosition()).bots.add(bot);
-        log.debug("Add bot\n" + bot);
         return true;
     }
 
     @Override
     public boolean addTile(Tile tile) {
         getCell(tile.getEntityPosition()).tiles.add(tile);
-        firstRead.add(tile);
         log.debug("Add tile\n" + tile);
         return true;
     }
@@ -95,9 +104,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     @Override
     public boolean addFire(Fire fire) {
         getCell(fire.getEntityPosition()).fires.add(fire);
-        if (fire.getBomb().isExploded()) {
-            firstRead.add(fire);
-        }
         log.debug("Add fire\n" + fire);
         return true;
     }
@@ -170,16 +176,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     @Override
     public Tile getTile(Vector2 entityPosition) {
         return getCell(entityPosition).tiles.stream().findFirst().orElse(null);
-
-        /*List<GameEntity> gameEntities = getGameEntitiesOnMapGrid(position);
-        if (gameEntities != null && !gameEntities.isEmpty()) {
-            for (GameEntity gameEntity : gameEntities) {
-                if (gameEntity instanceof Tile) {
-                    return (Tile) gameEntity;
-                }
-            }
-        }
-        return null;*/
     }
 
     @Override
@@ -235,18 +231,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     }
 
     @Override
-    public List<GameEntity> getGameEntitiesForSent() {
-        List<GameEntity> gameEntities = new LinkedList<>();
-        gameEntities.addAll(firstRead);
-        gameEntities.addAll(getAllBombs());
-        gameEntities.addAll(getAllBots());
-        gameEntities.addAll(playersNameKey.values());
-        firstRead.clear();
-
-        return gameEntities;
-    }
-
-    @Override
     public List<GameEntity> getGameEntitiesOnMapGrid(Vector2 vector2) {
         Cell cell = getCell(vector2);
         List<GameEntity> gameEntities = new LinkedList<>();
@@ -296,46 +280,93 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     }
 
     @Override
+    public boolean removeGameEntity(GameEntity gameEntity) {
+        if (gameEntity instanceof Bot) {
+            removeBot((Bot) gameEntity);
+            return true;
+        }
+
+        if (gameEntity instanceof Player) {
+            removePlayer((Player) gameEntity);
+            return true;
+        }
+
+        if (gameEntity instanceof Tile) {
+            removeTile((Tile) gameEntity);
+            return true;
+        }
+
+        if (gameEntity instanceof Bomb) {
+            removeBomb((Bomb) gameEntity);
+            return true;
+        }
+
+        if (gameEntity instanceof Bonus) {
+            removeBonus((Bonus) gameEntity);
+            return true;
+        }
+
+        if (gameEntity instanceof Fire) {
+            removeFire((Fire) gameEntity);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean removePlayer(Player player) {
-        firstRead.add(player);
-        playersNameKey.remove(player.getName());
-        log.debug("Remove player\n" + player);
-        return getCell(player.getEntityPosition()).players.remove(player);
+        if (getCell(player.getEntityPosition()).players.remove(player)) {
+            playersNameKey.remove(player.getName());
+            log.debug("Remove player\n" + player);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeBot(Bot bot) {
-        firstRead.add(bot);
-        log.debug("Remove bot\n" + bot);
-        return getCell(bot.getEntityPosition()).bots.remove(bot);
+        if (getCell(bot.getEntityPosition()).bots.remove(bot)) {
+            log.debug("Remove bot\n" + bot);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeTile(Tile tile) {
-        firstRead.add(tile);
-        getBonuses(tile.getEntityPosition()).stream().findFirst().ifPresent(firstRead::add);
-        log.debug("Remove tile\n" + tile);
-        return getCell(tile.getEntityPosition()).tiles.remove(tile);
+        if (getCell(tile.getEntityPosition()).tiles.remove(tile)) {
+            log.debug("Remove tile\n" + tile);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeBomb(Bomb bomb) {
-        log.debug("Remove bomb\n" + bomb);
-        return getCell(bomb.getEntityPosition()).bombs.remove(bomb);
+        if (getCell(bomb.getEntityPosition()).bombs.remove(bomb)) {
+            log.debug("Remove bomb\n" + bomb);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeBonus(Bonus bonus) {
-        firstRead.add(bonus);
-        log.debug("Remove bonus\n" + bonus);
-        return getCell(bonus.getEntityPosition()).bonuses.remove(bonus);
+        if (getCell(bonus.getEntityPosition()).bonuses.remove(bonus)) {
+            log.debug("Remove bonus\n" + bonus);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeFire(Fire fire) {
-        firstRead.add(fire);
-        log.debug("Remove fire\n" + fire);
-        return getCell(fire.getEntityPosition()).fires.remove(fire);
+        if (getCell(fire.getEntityPosition()).fires.remove(fire)) {
+            log.debug("Remove fire\n" + fire);
+            return true;
+        }
+        return false;
     }
 
     @Override

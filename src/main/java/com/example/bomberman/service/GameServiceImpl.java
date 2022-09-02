@@ -1,23 +1,16 @@
 package com.example.bomberman.service;
 
-import com.example.bomberman.model.Connection;
 import com.example.bomberman.model.GameSession;
 import com.example.bomberman.repos.GameRepository;
-import com.example.bomberman.repos.GameRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class GameServiceImpl implements GameService {
 
     private static final Logger log = LoggerFactory.getLogger(GameServiceImpl.class);
     private final GameRepository gameRepository;
-
-    //private long currGameId = -1;
 
     public GameServiceImpl(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
@@ -51,21 +44,4 @@ public class GameServiceImpl implements GameService {
         return gameRepository.getSession(gameId);
     }
 
-/*
-    synchronized public long connect(String name) {
-        if (currGameId == -1) {
-            currGameId = create();
-        }
-
-        long gameId = currGameId;
-
-        gameRepository.getSession(currGameId).addConnection(name);
-
-        if (gameRepository.getSession(currGameId).isFullPlayers()) {
-            start(currGameId);
-            currGameId = -1;
-        }
-
-        return gameId;
-    }*/
 }
