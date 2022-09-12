@@ -1,7 +1,6 @@
 package com.example.bomberman.controller;
 
 import com.example.bomberman.service.ConnectionProducer;
-import com.example.bomberman.service.MatchMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

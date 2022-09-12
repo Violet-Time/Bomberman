@@ -16,21 +16,15 @@ import java.util.function.Function;
 
 public class Bomb extends FinalPositionGameEntity {
 
-    /**
-     * How far the fire reaches when bomb explodes
-     */
+    // How far the fire reaches when bomb explodes
     @JsonIgnore
     private int strength = 1;
 
-    /**
-     * Timer in frames
-     */
+    // Timer in frames
     @JsonIgnore
     private int timer = 0;
 
-    /**
-     * Max timer value in seconds
-     */
+    // Max timer value in seconds
     @JsonIgnore
     private int timerMax = 2;
     @JsonIgnore

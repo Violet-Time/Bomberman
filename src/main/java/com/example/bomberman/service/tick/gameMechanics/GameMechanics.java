@@ -19,10 +19,10 @@ import java.util.*;
 
 public class GameMechanics implements Tickable {
 
-    private Replica gameEntityRepository;
+    private final Replica gameEntityRepository;
 
-    private Replicator replicator;
-    private InputEngine inputEngine;
+    private final Replicator replicator;
+    private final InputEngine inputEngine;
     private Thread inputEngineThread;
 
     private GameEngine gameEngine;

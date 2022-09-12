@@ -9,7 +9,6 @@ public final class Vector2 implements Collider {
     
     // fields
     // and methods
-
     private final int x;
     private final int y;
 

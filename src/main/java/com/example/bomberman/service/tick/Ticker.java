@@ -13,7 +13,7 @@ public class Ticker implements Runnable {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Ticker.class);
     public static final int FPS = 60;
     private static final long FRAME_TIME = 1000 / FPS;
-    private Set<Tickable> tickables = new LinkedHashSet<>();
+    private final Set<Tickable> tickables = new LinkedHashSet<>();
     private long tickNumber = 0;
 
     public void gameLoop() {

@@ -2,18 +2,12 @@ package com.example.bomberman.service.tick.gameMechanics.dynamic;
 
 import com.example.bomberman.service.tick.gameMechanics.FinalPositionGameEntity;
 import com.example.bomberman.service.tick.gameMechanics.Size;
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
 import com.example.bomberman.repos.GameEntityRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
-
 public class Fire extends FinalPositionGameEntity {
 
-    /**
-     * The bomb that triggered this fire
-     */
+    // The bomb that triggered this fire
     private final Bomb bomb;
 
     @JsonIgnore

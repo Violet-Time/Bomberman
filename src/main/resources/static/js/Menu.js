@@ -27,7 +27,7 @@ Menu.prototype.showMatchmaking = function () {
     var timer = 0;
     var timerText = new createjs.Text(timer, "40px Helvetica", "#ff4444");
     timerText.x = (gCanvas.getWidthInPixel() - timerText.getMeasuredWidth()) / 2;
-    timerText.y = 100;
+    timerText.y = 150;
     this.stage.addChild(timerText);
     this.elements.push(timerText);
 

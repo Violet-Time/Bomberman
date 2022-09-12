@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MatchMaker implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(MatchMaker.class);
-    private static final int WAITING_TIME = 30;
+    private static final int WAITING_TIME = 10;
     private final GameService gameService;
     private final ConnectionQueue connectionQueue;
 
@@ -37,7 +37,7 @@ public class MatchMaker implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
 
             try {
-                ExchangerGameId candidate = connectionQueue.getQueue().poll(10_000, TimeUnit.MILLISECONDS);
+                ExchangerGameId candidate = connectionQueue.getQueue().poll(WAITING_TIME, TimeUnit.SECONDS);
 
                 if (candidate != null) {
 

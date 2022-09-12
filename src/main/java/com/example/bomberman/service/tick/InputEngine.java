@@ -15,7 +15,6 @@ public class InputEngine implements Runnable {
         this.inputQueue = inputQueue;
     }
 
-
     public void addPlayer(String name) {
         actions.put(name, new Action());
     }
