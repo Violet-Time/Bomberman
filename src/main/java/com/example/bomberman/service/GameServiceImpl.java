@@ -16,8 +16,10 @@ public class GameServiceImpl implements GameService {
         this.gameRepository = gameRepository;
     }
 
-    //Create game session
-    //return id the game session
+    /**
+     * Create game session
+     * @return id of the created game session
+     */
     public long create() {
         GameSession gameSession = new GameSession();
         gameRepository.put(gameSession);

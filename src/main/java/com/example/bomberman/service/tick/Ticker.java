@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -13,7 +12,7 @@ public class Ticker implements Runnable {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Ticker.class);
     public static final int FPS = 60;
     private static final long FRAME_TIME = 1000 / FPS;
-    private final Set<Tickable> tickables = new LinkedHashSet<>();
+    private final Set<Ticking> ticking = new LinkedHashSet<>();
     private long tickNumber = 0;
 
     public void gameLoop() {
@@ -32,16 +31,16 @@ public class Ticker implements Runnable {
         }
     }
 
-    public void registerTickable(Tickable tickable) {
-        tickables.add(tickable);
+    public void registerTicking(Ticking ticking) {
+        this.ticking.add(ticking);
     }
 
-    public void unregisterTickable(Tickable tickable) {
-        tickables.remove(tickable);
+    public void unregisterTicking(Ticking ticking) {
+        this.ticking.remove(ticking);
     }
 
     private void act(long elapsed) {
-        tickables.forEach(tickable -> tickable.tick(elapsed));
+        ticking.forEach(ticking -> ticking.tick(elapsed));
     }
 
     public long getTickNumber() {

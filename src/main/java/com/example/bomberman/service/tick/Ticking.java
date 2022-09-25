@@ -3,7 +3,7 @@ package com.example.bomberman.service.tick;
 /**
  * Any game object that changes with time
  */
-public interface Tickable {
+public interface Ticking {
     /**
      * Applies changes to game objects that happen after elapsed time
      */

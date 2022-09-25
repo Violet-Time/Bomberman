@@ -6,18 +6,17 @@ import com.example.bomberman.model.Move;
 import com.example.bomberman.model.Replica;
 import com.example.bomberman.service.tick.InputQueue;
 import com.example.bomberman.service.tick.Replicator;
-import com.example.bomberman.service.tick.Tickable;
+import com.example.bomberman.service.tick.Ticking;
 import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
 import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Player;
 import com.example.bomberman.controller.network.ConnectionPool;
 import com.example.bomberman.service.tick.InputEngine;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class GameMechanics implements Tickable {
+public class GameMechanics implements Ticking {
 
     private final Replica gameEntityRepository;
 
@@ -62,7 +61,7 @@ public class GameMechanics implements Tickable {
         while (true) {
             Player player = gameEntityRepository.getDiePlayers().poll();
             if (player != null) {
-                replicator.gameOver(player.getName(), "You loose:(");
+                replicator.gameOver(player.getName(), "You lose:(");
             } else {
                 break;
             }
@@ -70,7 +69,7 @@ public class GameMechanics implements Tickable {
 
         if (gameEntityRepository.getAllPlayers().size() == 1 && gameEngine.getBotsCount() == gameEntityRepository.getNumberDeathsBots()) {
             Player player = gameEntityRepository.getAllPlayers().get(0);
-            replicator.gameOver(player.getName(), "You win:)");
+            replicator.gameOver(player.getName(), "You won:)");
         }
 
         if (gameEntityRepository.getAllPlayers().size() < 1) {

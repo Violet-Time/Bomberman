@@ -16,7 +16,6 @@ import java.util.List;
 public class GameSession {
     private static final Logger log = LoggerFactory.getLogger(GameSession.class);
     public static final int MAX_PLAYERS_IN_GAME = 4;
-
     private final long id = GameService.generateId();
     private final List<String> players;
     private final ConnectionPool sessionConnectionPool;
@@ -32,7 +31,7 @@ public class GameSession {
         this.replicator = new Replicator(sessionConnectionPool);
         this.gameMechanics = new GameMechanics(inputQueue, replicator);
         Ticker t = new Ticker();
-        t.registerTickable(gameMechanics);
+        t.registerTicking(gameMechanics);
         this.ticker = new Thread(t,"GameSession " + id);
         log.debug("Create Game Session {}", id);
     }

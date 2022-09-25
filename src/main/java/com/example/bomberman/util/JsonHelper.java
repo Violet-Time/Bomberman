@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-/**
- * Created by sergey on 2/2/17.
- */
 public final class JsonHelper {
     private static ObjectMapper mapper;
 

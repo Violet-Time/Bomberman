@@ -1,5 +1,6 @@
 package com.example.bomberman;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import static org.assertj.core.api.Assertions.fail;
  * WebSocket.
  * This test is inspired from: https://github.com/spring-guides/gs-messaging-stomp-websocket/blob/main/complete/src/test/java/com/example/messagingstompwebsocket/GreetingIntegrationTests.java
  */
+@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WebSocketIntegrationTest {
     WebSocketClient client;
