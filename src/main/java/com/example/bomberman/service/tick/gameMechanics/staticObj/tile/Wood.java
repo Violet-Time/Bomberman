@@ -10,14 +10,4 @@ public class Wood extends Tile {
     public Wood(GameEntityRepository gameEntityRepository) {
         super(gameEntityRepository, TYPE);
     }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
 }

@@ -1,6 +1,7 @@
 package com.example.bomberman.service.tick.gameMechanics.dynamic.pawn;
 
 import com.example.bomberman.model.Move;
+import com.example.bomberman.service.tick.Ticker;
 import com.example.bomberman.service.tick.gameMechanics.Vector2;
 import com.example.bomberman.service.tick.gameMechanics.dynamic.Fire;
 import com.example.bomberman.service.tick.gameMechanics.staticObj.bonus.Bonus;
@@ -20,11 +21,11 @@ public class Bot extends Pawn {
 
     // Target position on map we are heading to
     @JsonIgnore
-    Vector2 targetPosition = new Vector2(0,0);
+    Vector2 targetPosition;
 
     // Target bitmap position on map we are heading to
     @JsonIgnore
-    Vector2 targetBitmapPosition = new Vector2(0,0);
+    Vector2 targetBitmapPosition;
     @JsonIgnore
     int startTimerMax = 60;
     @JsonIgnore
@@ -38,7 +39,7 @@ public class Bot extends Pawn {
     private final Logger log = LoggerFactory.getLogger(Bot.class);
 
     public Bot(GameEntityRepository gameEntityRepository, Vector2 entityPosition) {
-        super(null, gameEntityRepository);
+        super(gameEntityRepository);
         setEntityPosition(entityPosition);
         this.direction = Move.IDLE;
         this.targetPosition = getEntityPosition();
@@ -47,7 +48,7 @@ public class Bot extends Pawn {
     }
 
     @Override
-    public void update() {
+    public void update(long elapsed) {
         if (!isAlive()) {
             return;
         }
@@ -88,7 +89,7 @@ public class Bot extends Pawn {
         }
 
         if (!this.wait) {
-            moveToTargetPosition();
+            moveToTargetPosition(elapsed);
         }
 
         handleBonusCollision();
@@ -123,9 +124,9 @@ public class Bot extends Pawn {
     /**
      * Moves a step forward to target position.
      */
-    public void moveToTargetPosition() {
+    public void moveToTargetPosition(long elapsed) {
 
-        int velocity = this.velocity;
+        int velocity = (int) (this.velocity * elapsed/Ticker.FRAME_TIME);
         int distanceX = Math.abs(this.targetBitmapPosition.getX() - getBitmapPosition().getX());
         int distanceY = Math.abs(this.targetBitmapPosition.getY() - getBitmapPosition().getY());
         if (distanceX > 0 && distanceX < this.velocity) {

@@ -23,12 +23,7 @@ public class Fire extends FinalPositionGameEntity {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
+    public void update(long elapsed) {
         if (bomb.isExploded()) {
             this.remove();
         }

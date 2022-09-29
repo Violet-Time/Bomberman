@@ -1,4 +1,4 @@
-package com.example.bomberman.model.message;
+package com.example.bomberman.model.event;
 
 public enum Topic {
     MOVE,

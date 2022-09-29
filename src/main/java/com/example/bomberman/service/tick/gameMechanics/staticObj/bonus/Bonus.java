@@ -25,14 +25,4 @@ public class Bonus extends FinalPositionGameEntity {
     public void destroy() {
         gameEntityRepository.removeBonus(this);
     }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
 }

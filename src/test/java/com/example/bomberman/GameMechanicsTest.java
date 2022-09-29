@@ -1,10 +1,7 @@
 package com.example.bomberman;
 
-import com.example.bomberman.model.message.Message;
-import com.example.bomberman.controller.network.ConnectionPool;
+import com.example.bomberman.model.event.EventData;
 import com.example.bomberman.service.tick.gameMechanics.GameMechanics;
-import com.example.bomberman.service.tick.InputQueue;
-import com.example.bomberman.service.tick.Replicator;
 import com.example.bomberman.util.JsonHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -16,10 +13,10 @@ public class GameMechanicsTest {
 
     @BeforeAll
     public static void setup() {
-        InputQueue inputQueue = new InputQueue();
+        /*InputQueue inputQueue = new InputQueue();
         ConnectionPool connectionPool = new ConnectionPool();
         Replicator replicator = new Replicator(connectionPool);
-        gameMechanics = new GameMechanics(inputQueue, replicator);
+        gameMechanics = new GameMechanics(inputQueue, replicator);*/
     }
 
     void levelView() {
@@ -29,9 +26,9 @@ public class GameMechanicsTest {
     @Test
     void move() {
 
-        Message message = JsonHelper.fromJson("{\"topic\":\"MOVE\",\"data\":{\"direction\":\"UP\"}}", Message.class);
+        EventData eventData = JsonHelper.fromJson("{\"topic\":\"MOVE\",\"data\":{\"direction\":\"UP\"}}", EventData.class);
 
-        System.out.println(message.getData().get("direction").asText());
+        System.out.println(eventData.getData().get("direction").asText());
 
         //gameMechanics.generateGameObjects();
 

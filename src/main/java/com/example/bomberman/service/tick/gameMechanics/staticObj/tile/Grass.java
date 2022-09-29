@@ -10,14 +10,4 @@ public class Grass extends Tile {
     public Grass(GameEntityRepository gameEntityRepository) {
         super(gameEntityRepository, TYPE);
     }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
 }

@@ -1,58 +1,44 @@
 package com.example.bomberman.service.tick;
 
-import com.example.bomberman.model.message.Message;
+import com.example.bomberman.model.event.EventData;
 import com.example.bomberman.model.Action;
 import com.example.bomberman.model.Move;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InputEngine implements Runnable {
+public class InputEngine {
     Map<String, Action> actions = new ConcurrentHashMap<>();
-    InputQueue inputQueue;
-
-    public InputEngine(InputQueue inputQueue) {
-        this.inputQueue = inputQueue;
-    }
 
     public void addPlayer(String name) {
         actions.put(name, new Action());
     }
-    @Override
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                Message message = inputQueue.poll();
-                if (message != null) {
-                    switch (message.getTopic()) {
-                        case MOVE -> move(message);
-                        case PLANT_BOMB -> plantBomb(message);
-                        case JUMP -> jump(message);
-                    }
-                }
-            } catch (InterruptedException ignore) {
+
+    public void addAction(EventData eventData) {
+        if (eventData != null) {
+            switch (eventData.getTopic()) {
+                case MOVE -> move(eventData);
+                case PLANT_BOMB -> plantBomb(eventData);
+                case JUMP -> jump(eventData);
             }
-
         }
-
     }
 
-    private void plantBomb(Message message) {
-        Action action = actions.get(message.getNamePlayer());
+    private void plantBomb(EventData eventData) {
+        Action action = actions.get(eventData.getNamePlayer());
         action.plantBomb();
     }
 
-    private void jump(Message message) {
-        Action action = actions.get(message.getNamePlayer());
+    private void jump(EventData eventData) {
+        Action action = actions.get(eventData.getNamePlayer());
         action.jump();
     }
-    private void move(Message message) {
-        Action action = actions.get(message.getNamePlayer());
-        action.move(Move.valueOf(message.getData().get("direction").asText()));
+    private void move(EventData eventData) {
+        Action action = actions.get(eventData.getNamePlayer());
+        action.setMove(Move.valueOf(eventData.getData().get("direction").asText()));
     }
 
     public Action getAction(String name) {
         return actions.get(name);
     }
-
 }

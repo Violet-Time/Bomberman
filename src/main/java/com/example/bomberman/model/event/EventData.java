@@ -1,4 +1,4 @@
-package com.example.bomberman.model.message;
+package com.example.bomberman.model.event;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Data
 @NoArgsConstructor
-public class Message {
+public class EventData {
     private Topic topic;
     private JsonNode data;
 
@@ -19,7 +19,7 @@ public class Message {
     private String namePlayer;
 
     @JsonCreator
-    public Message(@JsonProperty("topic") Topic topic, @JsonProperty("data") JsonNode data) {
+    public EventData(@JsonProperty("topic") Topic topic, @JsonProperty("data") JsonNode data) {
         this.topic = topic;
         this.data = data;
     }

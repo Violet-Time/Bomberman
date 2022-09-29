@@ -1,7 +1,7 @@
 package com.example.bomberman.service.tick;
 
-import com.example.bomberman.model.message.Message;
-import com.example.bomberman.model.message.Topic;
+import com.example.bomberman.model.event.EventData;
+import com.example.bomberman.model.event.Topic;
 import com.example.bomberman.controller.network.ConnectionPool;
 import com.example.bomberman.util.JsonHelper;
 import lombok.EqualsAndHashCode;
@@ -35,7 +35,7 @@ public class Replicator {
 
     public void receive(@NotNull WebSocketSession session, @NotNull String msg) {
         log.debug("RECEIVED: " + msg);
-        Message message = JsonHelper.fromJson(msg, Message.class);
+        EventData eventData = JsonHelper.fromJson(msg, EventData.class);
         //TODO TASK2 implement message processing
     }
 
@@ -44,13 +44,13 @@ public class Replicator {
         send(session, topic, object);
     }
     public void send(@NotNull WebSocketSession session, @NotNull Topic topic, @NotNull Object object) {
-        String message = JsonHelper.toJson(new Message(topic, JsonHelper.getJsonNode(object)));
+        String message = JsonHelper.toJson(new EventData(topic, JsonHelper.getJsonNode(object)));
         log.debug("SEND" + message);
         connectionPool.send(session, message);
     }
 
     public void broadcast(@NotNull Topic topic, @NotNull Object object) {
-        String message = JsonHelper.toJson(new Message(topic, JsonHelper.getJsonNode(object)));
+        String message = JsonHelper.toJson(new EventData(topic, JsonHelper.getJsonNode(object)));
         log.debug("SEND" + message);
         connectionPool.broadcast(message);
     }

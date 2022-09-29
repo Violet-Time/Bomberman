@@ -2,7 +2,7 @@ package com.example.bomberman.controller.network;
 
 import com.example.bomberman.model.GameIdName;
 import com.example.bomberman.model.GameSession;
-import com.example.bomberman.model.message.Message;
+import com.example.bomberman.model.event.EventData;
 import com.example.bomberman.repos.ConnectionRepository;
 import com.example.bomberman.repos.GameRepository;
 import com.example.bomberman.util.JsonHelper;
@@ -59,13 +59,13 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
     @Override
     protected void handleTextMessage(@NotNull WebSocketSession session, TextMessage message) {
         try {
-            Message message1 = JsonHelper.fromJson(message.getPayload(), Message.class);
+            EventData eventData = JsonHelper.fromJson(message.getPayload(), EventData.class);
             GameIdName gameIdName = connectionRepository.getConnection(session);
             if (gameIdName == null) {
                 return;
             }
-            message1.setNamePlayer(gameIdName.playerName());
-            gameRepository.getSession(gameIdName.gameId()).getInputQueue().add(message1);
+            eventData.setNamePlayer(gameIdName.playerName());
+            gameRepository.getSession(gameIdName.gameId()).addInput(eventData);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -83,7 +83,7 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
         }
     }
 
-    public Map<String, List<String>> splitQuery(URI uri) {
+    public final Map<String, List<String>> splitQuery(URI uri) {
         if (uri.getQuery() == null || uri.getQuery().isBlank()) {
             return Collections.emptyMap();
         }
@@ -92,10 +92,10 @@ public class ConnectionHandler extends TextWebSocketHandler implements WebSocket
                 .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
     }
 
-    public AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String it) {
-        final int idx = it.indexOf("=");
-        final String key = idx > 0 ? it.substring(0, idx) : it;
-        final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
+    public final AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String it) {
+        int idx = it.indexOf("=");
+        String key = idx > 0 ? it.substring(0, idx) : it;
+        String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
         return new AbstractMap.SimpleImmutableEntry<>(
                 URLDecoder.decode(key, StandardCharsets.UTF_8),
                 URLDecoder.decode(value, StandardCharsets.UTF_8)

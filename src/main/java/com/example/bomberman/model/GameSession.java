@@ -1,9 +1,10 @@
 package com.example.bomberman.model;
 
 import com.example.bomberman.controller.network.ConnectionPool;
+import com.example.bomberman.model.event.EventData;
 import com.example.bomberman.service.GameService;
+import com.example.bomberman.service.tick.InputEngine;
 import com.example.bomberman.service.tick.gameMechanics.GameMechanics;
-import com.example.bomberman.service.tick.InputQueue;
 import com.example.bomberman.service.tick.Replicator;
 import com.example.bomberman.service.tick.Ticker;
 import org.slf4j.Logger;
@@ -20,16 +21,16 @@ public class GameSession {
     private final List<String> players;
     private final ConnectionPool sessionConnectionPool;
     private final GameMechanics gameMechanics;
-    private final InputQueue inputQueue;
+    private final InputEngine inputEngine;
     private final Replicator replicator;
     private final Thread ticker;
 
     public GameSession() {
         this.sessionConnectionPool = new ConnectionPool();
         this.players = new ArrayList<>();
-        this.inputQueue = new InputQueue();
+        this.inputEngine = new InputEngine();
         this.replicator = new Replicator(sessionConnectionPool);
-        this.gameMechanics = new GameMechanics(inputQueue, replicator);
+        this.gameMechanics = new GameMechanics(inputEngine, replicator);
         Ticker t = new Ticker();
         t.registerTicking(gameMechanics);
         this.ticker = new Thread(t,"GameSession " + id);
@@ -101,8 +102,8 @@ public class GameSession {
         }
     }
 
-    public InputQueue getInputQueue() {
-        return inputQueue;
+    public void addInput(EventData eventData) {
+        inputEngine.addAction(eventData);
     }
 
     public int getPlayersInGame() {

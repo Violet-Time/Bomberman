@@ -11,45 +11,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Player extends Pawn {
+    //duration of action
+    @JsonIgnore
+    protected static final int INERTIA_TIME = 70;
 
     // player name
     @JsonIgnore
     protected final String name;
 
     @JsonIgnore
+    protected final Action action;
+
+    @JsonIgnore
     protected int timer = 0;
     @JsonIgnore
-    protected int timerMax = 10;
+    protected int timerMax = 10_000;
+    //the rest of the duration
+    @JsonIgnore
+    protected int inertia = INERTIA_TIME;
     @JsonIgnore
     private final Logger log = LoggerFactory.getLogger(Player.class);
 
     public Player(Action action, GameEntityRepository gameEntityRepository, String name) {
-        super(action, gameEntityRepository);
+        super(gameEntityRepository);
         this.name = name;
+        this.action = action;
     }
 
     @Override
-    public void update() {
+    public void update(long elapsed) {
 
         if (!this.alive) {
             return;
         }
 
-        if (action.isUp()) {
-            direction = Move.UP;;
-        } else if (action.isDown()) {
-            direction = Move.DOWN;
-        } else if (action.isLeft()) {
-            direction = Move.LEFT;
-        } else if (action.isRight()) {
-            direction = Move.RIGHT;
+        boolean plantBomb;
+        int velocity = (int) (this.velocity * elapsed/Ticker.FRAME_TIME);
+        Move tmpDir;
+
+        synchronized (action) {
+            tmpDir = action.getMove();
+            plantBomb = action.isPlantBomb();
+            action.resetAction();
+        }
+
+        if (inertia > 0 && direction != Move.IDLE && tmpDir == Move.IDLE) {
+            inertia -= elapsed;
         } else {
-            direction = Move.IDLE;
+            direction = tmpDir;
+            inertia = INERTIA_TIME;
         }
 
 
-        this.timer++;
-        if (action.isPlantBomb() || this.timer > this.timerMax * Ticker.FPS) {
+        this.timer += elapsed;
+        if (plantBomb || this.timer > this.timerMax) {
             timer = 0;
             plantBomb();
         }

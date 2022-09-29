@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Pawn extends DynamicGameObject {
+public abstract class Pawn extends DynamicGameObject {
 
     // Moving speed
     @JsonIgnore
@@ -45,8 +45,7 @@ public class Pawn extends DynamicGameObject {
     // Current direction
     protected Move direction;
 
-    @JsonIgnore
-    Action action;
+
 
     // Bomb that player can escape from even when there is a collision
     @JsonIgnore
@@ -62,22 +61,13 @@ public class Pawn extends DynamicGameObject {
     private final Logger log = LoggerFactory.getLogger(Pawn.class);
 
 
-    public Pawn(Action action, GameEntityRepository gameEntityRepository) {
+    public Pawn(GameEntityRepository gameEntityRepository) {
         super(gameEntityRepository, size, TYPE);
         this.alive = true;
-        this.action = action;
+        this.direction = Move.IDLE;
         //set collision size
         getCollision().setSize(new Size(20, 20));
         setDisplacementCollision(new Vector2(4, 3));
-    }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
     }
 
     public void plantBomb() {

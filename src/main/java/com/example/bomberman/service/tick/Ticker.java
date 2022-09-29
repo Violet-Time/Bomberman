@@ -11,18 +11,21 @@ import java.util.concurrent.locks.LockSupport;
 public class Ticker implements Runnable {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Ticker.class);
     public static final int FPS = 60;
-    private static final long FRAME_TIME = 1000 / FPS;
+    public static final long FRAME_TIME = 1000 / FPS;
     private final Set<Ticking> ticking = new LinkedHashSet<>();
     private long tickNumber = 0;
+
+    private long elapsed = FRAME_TIME;
 
     public void gameLoop() {
         while (!Thread.currentThread().isInterrupted()) {
             long started = System.currentTimeMillis();
-            act(FRAME_TIME);
-            long elapsed = System.currentTimeMillis() - started;
+            act(elapsed);
+            elapsed = System.currentTimeMillis() - started;
             if (elapsed < FRAME_TIME) {
                 log.info("All tick finish at {} ms", elapsed);
                 LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(FRAME_TIME - elapsed));
+                elapsed = FRAME_TIME;
             } else {
                 log.warn("tick lag {} ms", elapsed - FRAME_TIME);
             }

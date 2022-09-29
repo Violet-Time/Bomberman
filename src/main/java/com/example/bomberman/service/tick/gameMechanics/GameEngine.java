@@ -49,24 +49,24 @@ public class GameEngine {
         this.spawnPlayers();
     }
 
-    public void update() {
+    public void update(long elapsed) {
 
         // Bombs
         for (Bomb bomb : gameEntityRepository.getAllBombs()) {
-            bomb.update();
+            bomb.update(elapsed);
         }
 
         for (Pawn player : gameEntityRepository.getAllPlayers()) {
-            player.update();
+            player.update(elapsed);
         }
 
         // Bots
         for (Bot bot : gameEntityRepository.getAllBots()) {
-            bot.update();
+            bot.update(elapsed);
         }
 
         for (Fire fire : gameEntityRepository.getAllFires()) {
-            fire.update();
+            fire.update(elapsed);
         }
     }
     public void drawTiles() {

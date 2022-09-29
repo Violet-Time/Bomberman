@@ -10,14 +10,4 @@ public class Wall extends Tile {
     public Wall(GameEntityRepository gameEntityRepository) {
         super(gameEntityRepository, TYPE);
     }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
 }

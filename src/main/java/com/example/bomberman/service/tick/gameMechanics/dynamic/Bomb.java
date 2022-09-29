@@ -63,13 +63,9 @@ public class Bomb extends FinalPositionGameEntity {
         }*/
     }
 
-    @Override
-    public void init() {
-
-    }
 
     @Override
-    public void update() {
+    public void update(long elapsed) {
         if (this.exploded) { return; }
 
         this.timer++;

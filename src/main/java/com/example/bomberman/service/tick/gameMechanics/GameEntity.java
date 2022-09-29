@@ -36,12 +36,7 @@ public abstract class GameEntity extends Rect {
         this.displacementCollision = new Vector2(0,0);
     }
 
-
-
-
-    abstract public void init();
-
-    abstract public void update();
+    abstract public void update(long elapsed);
 
     public long getId() {
         return id;

@@ -1,13 +1,9 @@
 package com.example.bomberman.service.tick.gameMechanics;
 
-import com.example.bomberman.model.message.Message;
-import com.example.bomberman.model.message.Topic;
-import com.example.bomberman.model.Move;
+import com.example.bomberman.model.event.Topic;
 import com.example.bomberman.model.Replica;
-import com.example.bomberman.service.tick.InputQueue;
 import com.example.bomberman.service.tick.Replicator;
 import com.example.bomberman.service.tick.Ticking;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
 import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Player;
 import com.example.bomberman.controller.network.ConnectionPool;
 import com.example.bomberman.service.tick.InputEngine;
@@ -22,16 +18,15 @@ public class GameMechanics implements Ticking {
 
     private final Replicator replicator;
     private final InputEngine inputEngine;
-    private Thread inputEngineThread;
 
     private GameEngine gameEngine;
 
     private final Logger log = LoggerFactory.getLogger(GameMechanics.class);
 
-    public GameMechanics(InputQueue inputQueue, Replicator replicator) {
+    public GameMechanics(InputEngine inputEngine, Replicator replicator) {
+        this.inputEngine = inputEngine;
         this.replicator = replicator;
         this.gameEntityRepository = new Replica();
-        this.inputEngine = new InputEngine(inputQueue);
     }
 
     public void createGame() {
@@ -46,15 +41,12 @@ public class GameMechanics implements Ticking {
 
         this.gameEngine = new GameEngine(gameEntityRepository);
         this.gameEngine.setup();
-
-        inputEngineThread = new Thread(inputEngine, "InputEngine");
-        inputEngineThread.start();
     }
 
     @Override
     public void tick(long elapsed) {
 
-        gameEngine.update();
+        gameEngine.update(elapsed);
 
         replicator.broadcast(Topic.REPLICA, gameEntityRepository.getGameEntitiesForSent());
 
@@ -73,12 +65,11 @@ public class GameMechanics implements Ticking {
         }
 
         if (gameEntityRepository.getAllPlayers().size() < 1) {
-            inputEngineThread.interrupt();
             Thread.currentThread().interrupt();
         }
     }
 
-    private void doMechanics(Message message) {
+    /*private void doMechanics(Message message) {
         log.info(message.toString());
         switch (message.getTopic()) {
             case MOVE -> move(message);
@@ -87,9 +78,9 @@ public class GameMechanics implements Ticking {
                 return;
             }
         }
-    }
+    }*/
 
-    private void plantBomb(Message message) {
+    /*private void plantBomb(Message message) {
         Pawn player = gameEntityRepository.getPlayer(message.getNamePlayer());
         player.setDirection(Move.PLANT_BOMB);
     }
@@ -97,7 +88,7 @@ public class GameMechanics implements Ticking {
     private void move(Message message) {
         Pawn player = gameEntityRepository.getPlayer(message.getNamePlayer());
         player.setDirection(Move.valueOf(message.getData().get("direction").asText()));
-    }
+    }*/
 
     public void removePlayer(String name) {
         Player player = gameEntityRepository.getPlayer(name);

@@ -20,4 +20,9 @@ public abstract class FinalPositionGameEntity extends GameEntity {
             super.setBitmapPosition(bitmapPosition);
         }
     }
+
+    @Override
+    public void update(long elapsed) {
+
+    }
 }
