@@ -1,13 +1,13 @@
 const ClusterSetting = function () {
     this.gameServer = {
         protocol: 'wss',
-        host: 'bomberscw.herokuapp.com/',
+        host: 'bomberscw.herokuapp.com',
         path: '/events/connect'
     };
 
     this.matchMaker = {
         protocol: 'https',
-        host: 'bomberscw.herokuapp.com/',
+        host: 'bomberscw.herokuapp.com',
         path: '/matchmaker/join'
     };
 };
