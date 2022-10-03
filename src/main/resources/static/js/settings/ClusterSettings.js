@@ -1,15 +1,13 @@
 const ClusterSetting = function () {
     this.gameServer = {
-        protocol: 'ws',
-        host: 'localhost',
-        port: '8080',
+        protocol: 'wss',
+        host: 'bomberscw.herokuapp.com/',
         path: '/events/connect'
     };
 
     this.matchMaker = {
-        protocol: 'http',
-        host: 'localhost',
-        port: '8080',
+        protocol: 'https',
+        host: 'bomberscw.herokuapp.com/',
         path: '/matchmaker/join'
     };
 };
@@ -23,7 +21,7 @@ ClusterSetting.prototype.matchMakerUrl = function() {
 };
 
 function makeUrl(data) {
-    return data['protocol'] + "://" + data['host'] + ":" + data['port'] + data['path']
+    return data['protocol'] + "://" + data['host'] + data['path']
 }
 
 const gClusterSettings = new ClusterSetting();

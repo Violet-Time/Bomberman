@@ -23,9 +23,6 @@ const MessageBroker = function () {
 // msg при выводе в консоль должно выглядеть примерно так
 // "[{\"id\":383,\"type\":\"Pawn\",\"position\":{\"x\":800,\"y\":32},\"alive\":true,\"direction\":\"\"}]"
 MessageBroker.prototype.handleReplica = function (msg) {
-    console.log(msg);
-    //var gameObjects = JSON.parse(msg.data);
-
     if (!gGameEngine.game.started) {
         gGameEngine.game.start();
     }
@@ -38,7 +35,6 @@ MessageBroker.prototype.handleGameOver = function (msg) {
 
 // Реализация оставлена на разработчика сервера
 MessageBroker.prototype.handlePossess = function (msg) {
-    console.log(msg);
     gInputEngine.possessed = parseInt(msg.data);
 };
 

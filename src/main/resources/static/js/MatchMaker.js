@@ -13,7 +13,6 @@ MatchMaker.prototype.getSessionId = function () {
         .substring(1);
     let sessionId = -1;
     $.ajax(this.settings).done(function(id) {
-        console.log(id);
         sessionId = id;
     }).fail(function(status) {
         alert("Matchmaker request failed" + status);

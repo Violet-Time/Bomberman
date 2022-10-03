@@ -34,9 +34,7 @@ ServerProxy.prototype.connectToGameServer = function(gameId, name) {
     this.socket = new WebSocket(gClusterSettings.gameServerUrl() + "?gameId=" + gameId + "&" + name);
     const self = this;
     this.socket.onmessage = function (event) {
-        console.log(event.data)
         const msg = JSON.parse(event.data);
-        console.log(msg)
         if (self.handler[msg.topic] === undefined) {
             return;
         }
