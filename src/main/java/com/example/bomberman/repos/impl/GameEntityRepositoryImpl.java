@@ -1,20 +1,20 @@
 package com.example.bomberman.repos.impl;
 
-import com.example.bomberman.service.tick.gameMechanics.GameEntity;
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.Bomb;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.Fire;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Bot;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Player;
-import com.example.bomberman.service.tick.gameMechanics.staticObj.bonus.Bonus;
-import com.example.bomberman.service.tick.gameMechanics.staticObj.tile.*;
+import com.example.bomberman.service.game.core.logic.entity.GameEntity;
+import com.example.bomberman.service.game.core.logic.Vector2;
+import com.example.bomberman.service.game.core.logic.entity.Bomb;
+import com.example.bomberman.service.game.core.logic.entity.Fire;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Bot;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Pawn;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Player;
+import com.example.bomberman.service.game.core.logic.entity.bonus.Bonus;
 import com.example.bomberman.repos.GameEntityRepository;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.bomberman.service.game.core.logic.entity.tile.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class GameEntityRepositoryImpl implements GameEntityRepository {
@@ -49,14 +49,13 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
                     '}';
         }
     }
-    private final Map<String, Player> playersNameKey;
+
     private final Map<Vector2, Cell> gameEntityGrid;
 
-    @JsonIgnore
     private final Logger log = LoggerFactory.getLogger(GameEntityRepositoryImpl.class);
 
     public GameEntityRepositoryImpl() {
-        this.playersNameKey = new HashMap<>();
+
         this.gameEntityGrid = new HashMap<>();
     }
 
@@ -66,7 +65,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public boolean addPlayer(Player player) {
-        playersNameKey.put(player.getName(), player);
         Cell cell = getCell(player.getEntityPosition());
         cell.players.add(player);
         log.debug("Add player\n" + player);
@@ -145,7 +143,9 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public Player getPlayer(String namePlayer) {
-        return playersNameKey.get(namePlayer);
+        return getAllPlayers().stream()
+                .filter(e -> Objects.equals(e.getName(), namePlayer))
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -180,48 +180,50 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public List<Player> getAllPlayers() {
-        return new LinkedList<>(playersNameKey.values());
+        List<Player> players = new ArrayList<>();
+        gameEntityGrid.values().forEach(e -> players.addAll(e.players));
+        return players;
     }
 
     @Override
     public List<Bot> getAllBots() {
-        List<Bot> bots = new LinkedList<>();
+        List<Bot> bots = new ArrayList<>();
         gameEntityGrid.values().forEach(e -> bots.addAll(e.bots));
         return bots;
     }
 
     @Override
     public List<Tile> getAllTitles() {
-        List<Tile> tiles = new LinkedList<>();
+        List<Tile> tiles = new ArrayList<>();
         gameEntityGrid.values().forEach(e -> tiles.addAll(e.tiles));
         return tiles;
     }
 
     @Override
     public List<Bomb> getAllBombs() {
-        List<Bomb> bombs = new LinkedList<>();
+        List<Bomb> bombs = new ArrayList<>();
         gameEntityGrid.values().forEach(e -> bombs.addAll(e.bombs));
         return bombs;
     }
 
     @Override
     public List<Bonus> getAllBonuses() {
-        List<Bonus> bonuses = new LinkedList<>();
+        List<Bonus> bonuses = new ArrayList<>();
         gameEntityGrid.values().forEach(e -> bonuses.addAll(e.bonuses));
         return bonuses;
     }
 
     @Override
     public List<Fire> getAllFires() {
-        List<Fire> fires = new LinkedList<>();
+        List<Fire> fires = new ArrayList<>();
         gameEntityGrid.values().forEach(e -> fires.addAll(e.fires));
         return fires;
     }
 
     @Override
     public List<GameEntity> getAllGameEntities() {
-        List<GameEntity> gameEntities = new LinkedList<>();
-        gameEntities.addAll(playersNameKey.values());
+        List<GameEntity> gameEntities = new ArrayList<>();
+        gameEntities.addAll(getAllPlayers());
         gameEntities.addAll(getAllBots());
         gameEntities.addAll(getAllTitles());
         gameEntities.addAll(getAllBombs());
@@ -233,7 +235,7 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     @Override
     public List<GameEntity> getGameEntitiesOnMapGrid(Vector2 vector2) {
         Cell cell = getCell(vector2);
-        List<GameEntity> gameEntities = new LinkedList<>();
+        List<GameEntity> gameEntities = new ArrayList<>();
         gameEntities.addAll(cell.bombs);
         gameEntities.addAll(cell.bonuses);
         gameEntities.addAll(cell.bots);
@@ -245,15 +247,15 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public List<Pawn> getPlayersAndBots() {
-        List<Pawn> pawns = new LinkedList<>();
-        pawns.addAll(this.playersNameKey.values());
+        List<Pawn> pawns = new ArrayList<>();
+        pawns.addAll(getAllPlayers());
         pawns.addAll(getAllBots());
         return pawns;
     }
 
     @Override
     public List<Pawn> getPlayersAndBots(Vector2 vector2) {
-        List<Pawn> pawns = new LinkedList<>();
+        List<Pawn> pawns = new ArrayList<>();
         Cell cell = getCell(vector2);
         pawns.addAll(cell.players);
         pawns.addAll(cell.bots);
@@ -317,7 +319,6 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
     @Override
     public boolean removePlayer(Player player) {
         if (getCell(player.getEntityPosition()).players.remove(player)) {
-            playersNameKey.remove(player.getName());
             log.debug("Remove player\n" + player);
             return true;
         }
@@ -371,7 +372,9 @@ public class GameEntityRepositoryImpl implements GameEntityRepository {
 
     @Override
     public int playersCount() {
-        return playersNameKey.size();
+        AtomicInteger count = new AtomicInteger();
+        gameEntityGrid.values().forEach(e -> count.addAndGet(e.players.size()));
+        return count.get();
     }
 
     @Override

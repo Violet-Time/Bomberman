@@ -4,7 +4,7 @@
  * Will be very grateful for merge request with fix of this numbers
  *
  */
-var Menu = function (stage) {
+const Menu = function (stage) {
     this.stage = stage;
     this.elements = [];
 };
@@ -15,7 +15,7 @@ Menu.prototype.show = function () {
 };
 
 Menu.prototype.hide = function () {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (let i = 0; i < this.elements.length; i++) {
         this.stage.removeChild(this.elements[i]);
     }
     this.elements = [];
@@ -24,15 +24,15 @@ Menu.prototype.hide = function () {
 Menu.prototype.showMatchmaking = function () {
     this.drawBackground();
     this.showGameOverText("Matchmaking...");
-    var timer = 0;
-    var timerText = new createjs.Text(timer, "40px Helvetica", "#ff4444");
+    let timer = 0;
+    const timerText = new createjs.Text(timer, "40px Helvetica", "#ff4444");
     timerText.x = (gCanvas.getWidthInPixel() - timerText.getMeasuredWidth()) / 2;
     timerText.y = 150;
     this.stage.addChild(timerText);
     this.elements.push(timerText);
 
 
-    var self = this;
+    const self = this;
     createjs.Ticker.framerate = 1;
     createjs.Ticker.addEventListener('tick', function () {
         timerText.text = ++timer;
@@ -47,29 +47,28 @@ Menu.prototype.showGameOver = function (text) {
 
 
 Menu.prototype.drawBackground = function () {
-    var canvasRect = new createjs.Graphics()
+    const canvasRect = new createjs.Graphics()
         .beginFill("rgba(0, 0, 0, 0.5)")
         .drawRect(0, 0, gCanvas.getWidthInPixel(), gCanvas.getHeightInPixel());
 
-    var background = new createjs.Shape(canvasRect);
+    const background = new createjs.Shape(canvasRect);
     this.stage.addChild(background);
     this.elements.push(background);
 };
 
 Menu.prototype.showGameOverText = function (text) {
-    var gameOverText = new createjs.Text(text, "40px Helvetica", "#ff4444");
+    const gameOverText = new createjs.Text(text, "40px Helvetica", "#ff4444");
     gameOverText.x = (gCanvas.getWidthInPixel() - gameOverText.getMeasuredWidth()) / 2;
-    var shiftFromUpside = 60;
-    gameOverText.y = shiftFromUpside;
+    gameOverText.y = 60;
     this.stage.addChild(gameOverText);
     this.elements.push(gameOverText);
 };
 
 Menu.prototype.drawPlayButton = function () {
-    var buttonSize = 110;
+    const buttonSize = 110;
     // counting central position for this element
-    var buttonX = (gCanvas.getWidthInPixel() - buttonSize) / 2;
-    var buttonY = (gCanvas.getHeightInPixel() - buttonSize) / 2;
+    const buttonX = (gCanvas.getWidthInPixel() - buttonSize) / 2;
+    const buttonY = (gCanvas.getHeightInPixel() - buttonSize) / 2;
 
     this.drawPlayButtonBackground(buttonX, buttonY, buttonSize);
     this.drawPlayButtonText(buttonX, buttonY, buttonSize);
@@ -77,11 +76,11 @@ Menu.prototype.drawPlayButton = function () {
 };
 
 Menu.prototype.drawPlayButtonBackground = function (x, y, buttonSize) {
-    var playButtonBackgroundGraphics = new createjs.Graphics()
+    const playButtonBackgroundGraphics = new createjs.Graphics()
         .beginFill("rgba(0, 0, 0, 0.5)")
         .drawRect(x, y, buttonSize, buttonSize);
 
-    var background = new createjs.Shape(playButtonBackgroundGraphics);
+    const background = new createjs.Shape(playButtonBackgroundGraphics);
     this.stage.addChild(background);
     this.elements.push(background);
     this.setHandCursor(background);
@@ -92,22 +91,22 @@ Menu.prototype.drawPlayButtonBackground = function (x, y, buttonSize) {
 };
 
 Menu.prototype.drawPlayButtonText = function (x, y, buttonSize) {
-    var playText = new createjs.Text("Play", "32px Helvetica", "#ff4444");
+    const playText = new createjs.Text("Play", "32px Helvetica", "#ff4444");
     // counting central position inside background
     playText.x = x + (buttonSize - playText.getMeasuredWidth()) / 2;
-    var shiftFromDownside = 20;
+    const shiftFromDownside = 20;
     playText.y = (y + buttonSize) - (playText.getMeasuredHeight() + shiftFromDownside);
     this.stage.addChild(playText);
     this.elements.push(playText);
 };
 
 Menu.prototype.drawPawnIcon = function (x, y, buttonSize) {
-    var singleIcon = new createjs.Bitmap(gGameEngine.asset.pawn.player);
-    var pawnIconSize = 48;
+    const singleIcon = new createjs.Bitmap(gGameEngine.asset.pawn.player);
+    const pawnIconSize = 48;
     singleIcon.sourceRect = new createjs.Rectangle(0, 0, pawnIconSize, pawnIconSize);
     // counting central position inside background
     singleIcon.x = x + (buttonSize - pawnIconSize) / 2;
-    var shiftFromUpside = 13;
+    const shiftFromUpside = 13;
     singleIcon.y = y + shiftFromUpside;
     gGameEngine.stage.addChild(singleIcon);
     this.elements.push(singleIcon);

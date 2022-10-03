@@ -2,10 +2,10 @@
 // {"id":2,"type":"Bonus","position":{"y":20,"x":10},"bonusType":"BOMBS"}
 // {"id":3,"type":"Bonus","position":{"y":20,"x":10},"bonusType":"SPEED"}
 // {"id":4,"type":"Bonus","position":{"y":20,"x":10},"bonusType":"RANGE"}
-var Bonus = function (id, position, type) {
+const Bonus = function (id, position, type) {
     this.id = id;
 
-    var img;
+    let img;
     if (type === 'SPEED') {
         img = gGameEngine.asset.bonus.speed;
     } else if (type === 'BOMBS') {

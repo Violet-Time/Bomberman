@@ -13,14 +13,14 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
-    private String uri = "ws://localhost:{port}/events/connect?gameId={gameId}&name={name}";
+    private String uri = "ws://localhost:{port}/events/connect?gameId={gameId}&namePlayer={namePlayer}";
     private static final Logger log = LoggerFactory.getLogger(Client.class);
     WebSocketClient client = new StandardWebSocketClient();
     WebSocketSession session = null;
 
     public Client(String port, String gameId, String name) {
 
-        log.info("Create WebSocketClient gameId={}, name={}", gameId, name);
+        log.info("Create WebSocketClient gameId={}, namePlayer={}", gameId, name);
         // The socket that receives events
         EventHandler socket = new EventHandler();
         // Make a handshake with server

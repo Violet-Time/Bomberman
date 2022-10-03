@@ -37,10 +37,10 @@ public class MatchMakerControllerIntegrationTest {
         /*for (int i = 0; i < 4; i++) {
             new Thread(() -> {*/
                 /*String str = "0";
-                String name = String.valueOf(Math.random());
+                String namePlayer = String.valueOf(Math.random());
                 try {
                     str = mockMvc.perform(post("/matchmaker/join")
-                                    .content("name=" + name)
+                                    .content("namePlayer=" + namePlayer)
                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                             .andExpect(status().isOk())
                             .andReturn().getResponse().getContentAsString();
@@ -48,7 +48,7 @@ public class MatchMakerControllerIntegrationTest {
                     throw new RuntimeException(e);
                 }
                 System.out.println(str);
-                Client client = new Client(port + "", str, name);
+                Client client = new Client(port + "", str, namePlayer);
                 client.close();*/
        /*     }).start();
         }
@@ -62,7 +62,7 @@ public class MatchMakerControllerIntegrationTest {
             new Thread(() -> {
                 Thread.currentThread().setName("Client Test " + finalI);
                 String name = String.valueOf(Math.random());
-                String gameId = this.restTemplate.postForObject("http://localhost:{port}/matchmaker/join?name={name}",
+                String gameId = this.restTemplate.postForObject("http://localhost:{port}/matchmaker/join?name={namePlayer}",
                         null,
                         String.class,
                         port,

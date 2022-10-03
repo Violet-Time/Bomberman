@@ -1,15 +1,15 @@
 package com.example.bomberman.repos;
 
-import com.example.bomberman.service.tick.gameMechanics.GameEntity;
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.Bomb;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.Fire;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Bot;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Player;
-import com.example.bomberman.service.tick.gameMechanics.staticObj.bonus.Bonus;
-import com.example.bomberman.service.tick.gameMechanics.staticObj.tile.Material;
-import com.example.bomberman.service.tick.gameMechanics.staticObj.tile.Tile;
+import com.example.bomberman.service.game.core.logic.entity.GameEntity;
+import com.example.bomberman.service.game.core.logic.Vector2;
+import com.example.bomberman.service.game.core.logic.entity.Bomb;
+import com.example.bomberman.service.game.core.logic.entity.Fire;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Bot;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Pawn;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Player;
+import com.example.bomberman.service.game.core.logic.entity.bonus.Bonus;
+import com.example.bomberman.service.game.core.logic.entity.tile.Material;
+import com.example.bomberman.service.game.core.logic.entity.tile.Tile;
 
 import java.util.List;
 

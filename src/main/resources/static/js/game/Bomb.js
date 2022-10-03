@@ -1,15 +1,15 @@
 // Вид объекта в реплике
 // {"id":1,"type":"Bomb","position":{"y":20,"x":10}}
-var Bomb = function (id, position, strength) {
+const Bomb = function (id, position, strength) {
     this.id = id;
     this.strength = strength;
 
-    var size = {
+    const size = {
         w: 28,
         h: 28
     };
 
-    var spriteSheet = new createjs.SpriteSheet({
+    const spriteSheet = new createjs.SpriteSheet({
         images: [gGameEngine.asset.bomb],
         frames: {
             width: size.w,

@@ -1,6 +1,6 @@
 package com.example.bomberman.model;
 
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
+import com.example.bomberman.service.game.core.logic.Vector2;
 
 public enum Move {
     UP(new Vector2(0, 1)), DOWN(new Vector2(0, -1)), LEFT(new Vector2(-1, 0)),

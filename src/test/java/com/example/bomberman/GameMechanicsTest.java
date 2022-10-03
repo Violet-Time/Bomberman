@@ -1,7 +1,7 @@
 package com.example.bomberman;
 
 import com.example.bomberman.model.event.EventData;
-import com.example.bomberman.service.tick.gameMechanics.GameMechanics;
+import com.example.bomberman.service.game.core.logic.GameMechanics;
 import com.example.bomberman.util.JsonHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;

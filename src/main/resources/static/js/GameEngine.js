@@ -1,4 +1,4 @@
-var GameEngine = function () {
+const GameEngine = function () {
     this.asset = {
         pawn: {},
         bomb: null,
@@ -16,8 +16,8 @@ GameEngine.prototype.load = function () {
     this.stage.canvas.height = gCanvas.getHeightInPixel();
     this.stage.enableMouseOver();
 
-    var queue = new createjs.LoadQueue();
-    var self = this;
+    const queue = new createjs.LoadQueue();
+    const self = this;
     queue.addEventListener("complete", function () {
         self.asset.pawn.player = queue.getResult("pawn_player");
         self.asset.pawn.rival = queue.getResult("pawn_rival");
@@ -52,8 +52,8 @@ GameEngine.prototype.initCanvas = function () {
 };
 
 GameEngine.prototype.matchmaking = function () {
-    var gameId = gMatchMaker.getSessionId();
-    var name = gMatchMaker.settings.data
+    const gameId = gMatchMaker.getSessionId();
+    const name = gMatchMaker.settings.data;
     this.serverProxy.connectToGameServer(gameId, name);
 
     this.game = new Game(this.stage);

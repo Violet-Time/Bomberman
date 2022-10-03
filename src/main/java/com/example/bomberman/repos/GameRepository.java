@@ -1,6 +1,6 @@
 package com.example.bomberman.repos;
 
-import com.example.bomberman.model.GameSession;
+import com.example.bomberman.service.GameSession;
 
 import java.util.Collection;
 

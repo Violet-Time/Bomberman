@@ -2,8 +2,8 @@ package com.example.bomberman.service.tick.gameMechanics;
 
 import com.example.bomberman.repos.GameEntityRepository;
 import com.example.bomberman.repos.impl.GameEntityRepositoryImpl;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Bot;
-import com.example.bomberman.service.tick.gameMechanics.dynamic.pawn.Pawn;
+import com.example.bomberman.service.game.core.logic.Vector2;
+import com.example.bomberman.service.game.core.logic.entity.pawn.Bot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +16,9 @@ public class GameEntityTest {
     @Test
     void setBitmapPositionTest() {
         GameEntityRepository gameEntityRepository = new GameEntityRepositoryImpl();
-        Vector2 first = new Vector2(1, this.TILES_Y - 2);
-        Bot bot = new Bot(gameEntityRepository, first);
+        Vector2 first = new Vector2(1, TILES_Y - 2);
+        Bot bot = new Bot(gameEntityRepository);
+        bot.setEntityPosition(first);
         Assertions.assertFalse(gameEntityRepository.getBots(first).isEmpty());
 
         bot.setBitmapPosition(bot.getBitmapPosition().add(1,1));

@@ -1,13 +1,11 @@
 package com.example.bomberman.service.tick;
 
 
-import com.example.bomberman.service.tick.gameMechanics.Rect;
-import com.example.bomberman.service.tick.gameMechanics.Size;
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
+import com.example.bomberman.service.game.core.logic.Rect;
+import com.example.bomberman.service.game.core.logic.Size;
+import com.example.bomberman.service.game.core.logic.Vector2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Objects;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

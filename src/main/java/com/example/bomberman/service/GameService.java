@@ -1,11 +1,13 @@
 package com.example.bomberman.service;
 
-import com.example.bomberman.model.GameSession;
-
 import java.util.concurrent.atomic.AtomicLong;
 
 public interface GameService {
     AtomicLong idGenerator = new AtomicLong();
+    /**
+     * Create game session
+     * @return id of the created game session
+     */
     long create();
     void start(long gameId);
     void connect(String nameOfPlayer, long gameId);

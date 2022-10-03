@@ -1,8 +1,8 @@
 package com.example.bomberman.controller;
 
-import com.example.bomberman.controller.network.ConnectionHandler;
+import com.example.bomberman.service.network.ConnectionHandler;
 import com.example.bomberman.repos.ConnectionRepository;
-import com.example.bomberman.repos.GameRepositoryImpl;
+import com.example.bomberman.repos.impl.GameRepositoryImpl;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

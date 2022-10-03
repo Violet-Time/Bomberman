@@ -1,4 +1,4 @@
-var MessageBroker = function () {
+const MessageBroker = function () {
     this.handler = {
         'Pawn': this.handlePawn,
         'Bomb': this.handleBomb,
@@ -46,11 +46,11 @@ MessageBroker.prototype.handlePossess = function (msg) {
 // Суть примерно одна - если нашли объект, то обновили его характеристики (Если это обычные объекты, то они не обновляются)
 // Если нет, то обратились к конструктору за новым
 MessageBroker.prototype.handlePawn = function(obj) {
-    var player = gGameEngine.game.players.find(function (el) {
+    let player = gGameEngine.game.players.find(function (el) {
         return el.id === obj.id;
     });
-    var position = gMessageBroker.mirrorPosition(obj.position);
-    var direction = obj.direction;
+    const position = gMessageBroker.mirrorPosition(obj.position);
+    const direction = obj.direction;
     if (player) {
         player.bmp.x = position.x;
         player.bmp.y = position.y;
@@ -63,10 +63,10 @@ MessageBroker.prototype.handlePawn = function(obj) {
 };
 
 MessageBroker.prototype.handleBomb = function(obj) {
-    var bomb = gGameEngine.game.bombs.find(function (el) {
+    const bomb = gGameEngine.game.bombs.find(function (el) {
         return el.id === obj.id;
     });
-    var position = gMessageBroker.mirrorPosition(obj.position);
+    const position = gMessageBroker.mirrorPosition(obj.position);
 
     if (bomb) {
         bomb.bmp.x = position.x;
@@ -77,10 +77,10 @@ MessageBroker.prototype.handleBomb = function(obj) {
 };
 
 MessageBroker.prototype.handleBonus = function(obj) {
-    var bonus = gGameEngine.game.bonuses.find(function (el) {
+    const bonus = gGameEngine.game.bonuses.find(function (el) {
         return el.id === obj.id;
     });
-    var position = gMessageBroker.mirrorPosition(obj.position);
+    const position = gMessageBroker.mirrorPosition(obj.position);
 
     if (bonus) {
         bonus.bmp.x = position.x;
@@ -91,10 +91,10 @@ MessageBroker.prototype.handleBonus = function(obj) {
 };
 
 MessageBroker.prototype.handleTile = function (obj) {
-    var tile = gGameEngine.game.tiles.find(function (el) {
+    const tile = gGameEngine.game.tiles.find(function (el) {
         return el.id === obj.id;
     });
-    var position = gMessageBroker.mirrorPosition(obj.position);
+    const position = gMessageBroker.mirrorPosition(obj.position);
     if (tile) {
         tile.material = obj.type;
     } else {
@@ -103,11 +103,11 @@ MessageBroker.prototype.handleTile = function (obj) {
 };
 
 MessageBroker.prototype.handleFire = function (obj) {
-    var fire = gGameEngine.game.fires.find(function (el) {
+    const fire = gGameEngine.game.fires.find(function (el) {
         return el.id === obj.id;
     });
 
-    var position = gMessageBroker.mirrorPosition(obj.position);
+    const position = gMessageBroker.mirrorPosition(obj.position);
     if (!fire) {
         new Fire(obj.id, position);
     }
@@ -121,7 +121,7 @@ MessageBroker.prototype.mirrorPosition = function (origin) {
 };
 
 MessageBroker.prototype.move = function (direction) {
-    var template = {
+    const template = {
         topic: "MOVE",
         data: {
             direction: direction.toUpperCase()
@@ -132,7 +132,7 @@ MessageBroker.prototype.move = function (direction) {
 };
 
 MessageBroker.prototype.plantBomb = function () {
-    var template = {
+    const template = {
         topic: "PLANT_BOMB",
         data: {}
     };
@@ -142,7 +142,7 @@ MessageBroker.prototype.plantBomb = function () {
 
 // Experimental
 MessageBroker.prototype.jump = function () {
-    var template = {
+    const template = {
         topic: "JUMP",
         data: {}
     };

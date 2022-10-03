@@ -1,8 +1,8 @@
 package com.example.bomberman;
 
-import com.example.bomberman.service.tick.gameMechanics.Vector2;
-import com.example.bomberman.service.tick.gameMechanics.Rect;
-import com.example.bomberman.service.tick.gameMechanics.Size;
+import com.example.bomberman.service.game.core.logic.Vector2;
+import com.example.bomberman.service.game.core.logic.Rect;
+import com.example.bomberman.service.game.core.logic.Size;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertFalse;

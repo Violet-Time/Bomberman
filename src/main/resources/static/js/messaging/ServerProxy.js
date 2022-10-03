@@ -1,4 +1,4 @@
-var ServerProxy = function () {
+const ServerProxy = function () {
     this.handler = {
         'REPLICA': gMessageBroker.handleReplica,
         'POSSESS': gMessageBroker.handlePossess,
@@ -7,7 +7,7 @@ var ServerProxy = function () {
 };
 
 ServerProxy.prototype.setupMessaging = function() {
-    var self = this;
+    const self = this;
     gInputEngine.subscribe('up', function () {
         self.socket.send(gMessageBroker.move('up'))
     });
@@ -32,10 +32,10 @@ ServerProxy.prototype.setupMessaging = function() {
 // у WebSocketSession в Java имеется функция getURI() с помощью которого этот "Хвост" получается
 ServerProxy.prototype.connectToGameServer = function(gameId, name) {
     this.socket = new WebSocket(gClusterSettings.gameServerUrl() + "?gameId=" + gameId + "&" + name);
-    var self = this;
+    const self = this;
     this.socket.onmessage = function (event) {
         console.log(event.data)
-        var msg = JSON.parse(event.data);
+        const msg = JSON.parse(event.data);
         console.log(msg)
         if (self.handler[msg.topic] === undefined) {
             return;

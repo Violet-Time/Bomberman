@@ -1,4 +1,4 @@
-var ClusterSetting = function () {
+const ClusterSetting = function () {
     this.gameServer = {
         protocol: 'ws',
         host: 'localhost',
@@ -26,4 +26,4 @@ function makeUrl(data) {
     return data['protocol'] + "://" + data['host'] + ":" + data['port'] + data['path']
 }
 
-var gClusterSettings = new ClusterSetting();
+const gClusterSettings = new ClusterSetting();

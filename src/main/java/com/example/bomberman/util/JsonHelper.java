@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public final class JsonHelper {
-    private static ObjectMapper mapper;
+    private static final ObjectMapper mapper;
 
     static {
         mapper = new ObjectMapper();

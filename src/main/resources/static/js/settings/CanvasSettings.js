@@ -1,4 +1,4 @@
-var CanvasSettings = function () {
+const CanvasSettings = function () {
     this.tileSize = 32;
     this.tiles = {
         w: 27,

@@ -1,13 +1,13 @@
 // Вид объекта в реплике
 // {"id":5,"type":"Fire","position":{"y":20,"x":10}}
-var Fire = function (id, position) {
+const Fire = function (id, position) {
     this.id = id;
-    var size = {
+    const size = {
         w: 38,
         h: 38
     };
 
-    var spriteSheet = new createjs.SpriteSheet({
+    const spriteSheet = new createjs.SpriteSheet({
         images: [gGameEngine.asset.fire],
         frames: {
             width: size.w,
@@ -26,8 +26,8 @@ var Fire = function (id, position) {
     this.bmp.x = position.x + 2;
     this.bmp.y = position.y - 5;
 
-    var self = this;
-    this.bmp.addEventListener('animationend', function() {
+    const self = this;
+    this.bmp.addEventListener('animationend', function () {
         self.remove();
     });
 

@@ -1,10 +1,10 @@
-var Game = function (stage) {
+const Game = function (stage) {
     this.stage = stage;
 
     this.players = [];
     this.tiles = [];
     this.fires = [];
-    this.bombs =  [];
+    this.bombs = [];
     this.bonuses = [];
 
     this.started = false;
@@ -19,7 +19,7 @@ Game.prototype.start = function () {
     this.drawBackground();
 
     createjs.Ticker.removeAllEventListeners('tick');
-    var self = this;
+    const self = this;
     createjs.Ticker.framerate = 60;
     createjs.Ticker.addEventListener('tick', function () {
         self.update();
@@ -29,11 +29,12 @@ Game.prototype.start = function () {
 };
 
 Game.prototype.update = function () {
-    for (var i = 0; i < this.players.length; i++) {
+    let i;
+    for (i = 0; i < this.players.length; i++) {
         this.players[i].update();
     }
 
-    for (var i = 0; i < this.bombs.length; i++) {
+    for (i = 0; i < this.bombs.length; i++) {
         this.bombs[i].update();
     }
 
@@ -46,7 +47,7 @@ Game.prototype.finish = function () {
     this.stage.removeAllChildren();
 
     [this.players, this.fires, this.bombs].forEach(function (it) {
-        var i = it.length;
+        let i = it.length;
         while (i--) {
             it[i].remove();
             it.splice(i, 1);
@@ -56,9 +57,9 @@ Game.prototype.finish = function () {
 
 
 Game.prototype.drawBackground = function () {
-    for (var i = 0; i < gCanvas.tiles.w; i++) {
-        for (var j = 0; j < gCanvas.tiles.h; j++) {
-            var bitmap = new createjs.Bitmap(gGameEngine.asset.tile.grass);
+    for (let i = 0; i < gCanvas.tiles.w; i++) {
+        for (let j = 0; j < gCanvas.tiles.h; j++) {
+            const bitmap = new createjs.Bitmap(gGameEngine.asset.tile.grass);
             bitmap.x = i * gCanvas.tileSize;
             bitmap.y = j * gCanvas.tileSize;
             this.stage.addChild(bitmap);
@@ -74,12 +75,12 @@ Game.prototype.gc = function (gameObjects) {
         this.started = true;
     }
 
-    var survivors = new Set();
+    const survivors = new Set();
 
     // Стоит отметить что все объекты изначально разделяются по ID
-    for (var i = 0; i < gameObjects.length; i++) {
-        var wasDeleted = false;
-        var obj = gameObjects[i];
+    for (let i = 0; i < gameObjects.length; i++) {
+        let wasDeleted = false;
+        const obj = gameObjects[i];
 
         // Суть в том, что Пешка и Бомба живут ровно столько, сколько мы отправляем их в реплике (В отличие от других
         // объектов, таких как ящики)
@@ -93,7 +94,7 @@ Game.prototype.gc = function (gameObjects) {
         // Если они были присланны в реплике в первый раз, то они появляются
         // Если же второй раз, то удаляются
         [this.tiles, this.bonuses].forEach(function (it) {
-            var i = it.length;
+            let i = it.length;
             while (i--) {
                 if (obj.id === it[i].id) {
                     it[i].remove();
@@ -112,7 +113,7 @@ Game.prototype.gc = function (gameObjects) {
 
     // Вот как раз мы тут удаляем Pawn и Bomb
     [this.players, this.bombs].forEach(function (it) {
-        var i = it.length;
+        let i = it.length;
         while (i--) {
             if (!survivors.has(it[i].id)) {
                 it[i].remove();

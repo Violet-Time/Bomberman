@@ -3,16 +3,16 @@
 // {"id":0,"type":"Pawn","position":{"y":20,"x":10},"alive":true,"direction":"UP"}
 // Отметим, что направление имеет не только 4 возможных варианта, может быть и 5, главное что бы он отличался от первых 4
 // Он означает, что объект просто покоится (пример показан выше с пустым направлением)
-var Player = function (id, position) {
+const Player = function (id, position) {
     this.id = id;
     this.alive = true;
 
-    var size = {
+    const size = {
         w: 48,
         h: 48
     };
 
-    var spriteSheet = new createjs.SpriteSheet({
+    const spriteSheet = new createjs.SpriteSheet({
         images: id === gInputEngine.possessed ? [gGameEngine.asset.pawn.player] : [gGameEngine.asset.pawn.rival],
         frames: {
             width: size.w,

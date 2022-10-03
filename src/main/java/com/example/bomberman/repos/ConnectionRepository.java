@@ -1,20 +1,20 @@
 package com.example.bomberman.repos;
 
-import com.example.bomberman.model.GameIdName;
-import org.springframework.stereotype.Repository;
+import com.example.bomberman.model.ExchangerGameId;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-@Repository
-public class ConnectionRepository {
-    private final ConcurrentHashMap<WebSocketSession, GameIdName> map = new ConcurrentHashMap<>();
+public interface ConnectionRepository {
 
-    public void put(WebSocketSession webSocketSession, GameIdName connection) {
-        map.put(webSocketSession, connection);
-    }
+    void addConnection(WebSocketSession webSocketSession, Long gameId);
 
-    public GameIdName getConnection(WebSocketSession webSocketSession) {
-        return map.get(webSocketSession);
-    }
+    Long getConnection(WebSocketSession webSocketSession);
+
+    void removeConnection(WebSocketSession webSocketSession);
+
+    boolean offerNewConnection(ExchangerGameId exchangerGameId);
+    boolean offerNewConnection(ExchangerGameId exchangerGameId, long timeout) throws InterruptedException ;
+
+    ExchangerGameId pullNewConnection(long time, TimeUnit timeUnit) throws InterruptedException;
 }
