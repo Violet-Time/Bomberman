@@ -1,15 +1,15 @@
 const ClusterSetting = function () {
     this.gameServer = {
         protocol: 'ws',
-        host: 'localhost',
-        port: '8080',
+        host: 'violet.mercusysddns.com',
+        port: '80',
         path: '/events/connect'
     };
 
     this.matchMaker = {
         protocol: 'http',
-        host: 'localhost',
-        port: '8080',
+        host: 'violet.mercusysddns.com',
+        port: '80',
         path: '/matchmaker/join'
     };
 };
